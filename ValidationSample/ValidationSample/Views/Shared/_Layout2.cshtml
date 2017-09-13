@@ -1,0 +1,64 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+    @*<link href="~/Content/Site.css" rel="stylesheet" type="text/css" />*@
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <script src="~/Scripts/modernizr-2.8.3.js"></script>
+</head>
+<body style="background-image : url(/Content/img/MainLayout.jpg)">
+    <div class="navbar navbar-inverse navbar-fixed-top" style="background-color: rgba(255,255,255,0.5);" data-target="#myNavbar">
+        <div class="container">
+            <div class="navbar-header">
+                @Html.ActionLink("Home", "MainView", "Main", new { area = "" }, new { style = "color:green;", @class = "navbar-brand" })
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                
+                
+
+            </div>
+            @if (Session["Id"] != null && Session["IsValid2FA"] != null && Convert.ToBoolean(Session["IsValid2FA"]))
+            {
+                <div class="collapse navbar-collapse " id="myNavbar">
+                    <ul class="nav navbar-nav">
+                        @Html.ActionLink("Events", "GetAllEvents", "Main", new { area = "" }, new { @class = "navbar-brand" })
+                        @Html.ActionLink("TestSuite", "GetAllTestSuites", "TestSuite", new { area = "" }, new { @class = "navbar-brand" })
+                        @Html.ActionLink("TestcaseLog", "GetAllTestcaseLogs", "Main", new { area = "" }, new { @class = "navbar-brand" })
+                        @*<span style="padding-left:800px; color: grey" class="navbar-brand">
+                        @Html.ActionLink("Logout", "LogOut", "Home", new { style="color:grey;" })
+                    </span>*@
+                        <li class="w3-dropdown-hover w3-hide-small">
+                            <button class="w3-padding-large w3-button" title="More" style="padding-left:300px; color: green; text-align:right"><b>@Session["Id"]</b> <i class="fa fa-caret-down" style="color: grey;align-content:flex-end"></i></button>
+                            <div class="w3-dropdown-content w3-bar-block w3-card-4">
+                                @Html.ActionLink("Logout", "LogOut", "Home", new { @class = "w3-bar-item w3-button", style = "color:green;" })
+
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+            }
+           
+        </div>
+    </div>
+
+    <div class="body-content">
+        <hr />
+        <br />
+        @RenderBody()
+        <hr />
+        <footer>
+            <p>&copy; @DateTime.Now.Year - Validation</p>
+        </footer>
+    </div>
+
+    
+    <script src="~/Scripts/bootstrap.min.js"></script>
+</body>
+</html>

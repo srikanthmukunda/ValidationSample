@@ -1,0 +1,236 @@
+﻿
+@{
+    ViewBag.Title = "Events";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" href="~/Content/JQWidgets/jqx.base.css" type="text/css" />
+<link rel="stylesheet" href="~/Content/JQWidgets/jqx.energyblue.css" type="text/css" />
+<style>
+    .jqx-layout-group-auto-hide-content-vertical
+{
+    width: 200px;
+}
+</style>
+@section Scripts{
+<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+  <script src="~/Scripts/JQWidgets/jqx-all.js"></script>
+<script src="~/Scripts/JQWidgets/jqxcore.js"></script>
+<script src="~/Scripts/JQWidgets/jqxbuttons.js"></script>
+<script src="~/Scripts/JQWidgets/jqxscrollbar.js"></script>
+<script src="~/Scripts/JQWidgets/jqxdata.js"></script>
+
+<script src="~/Scripts/JQWidgets/jqxdate.js"></script>
+<script src="~/Scripts/JQWidgets/jqxscheduler.js"></script>
+<script src="~/Scripts/JQWidgets/jqxscheduler.api.js"></script>
+<script src="~/Scripts/JQWidgets/jqxdatetimeinput.js"></script>
+<script src="~/Scripts/JQWidgets/jqxmenu.js"></script>
+<script src="~/Scripts/JQWidgets/jqxcalendar.js"></script>
+<script src="~/Scripts/JQWidgets/jqxtooltip.js"></script>
+<script src="~/Scripts/JQWidgets/jqxwindow.js"></script>
+<script src="~/Scripts/JQWidgets/jqxcheckbox.js"></script>
+<script src="~/Scripts/JQWidgets/jqxlistbox.js"></script>
+<script src="~/Scripts/JQWidgets/jqxdropdownlist.js"></script>
+<script src="~/Scripts/JQWidgets/jqxnumberinput.js"></script>
+<script src="~/Scripts/JQWidgets/jqxradiobutton.js"></script>
+<script src="~/Scripts/JQWidgets/jqxinput.js"></script>
+<script src="~/Scripts/JQWidgets/globalize.js"></script>
+<script src="~/Scripts/JQWidgets/globalize.culture.de-DE.js"></script>
+<script src="~/Scripts/bootstrap.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        
+        var source =
+        {
+            dataType: 'json',
+            dataFields: [
+                { name: 'EventId', type: 'int' },
+                { name: 'Subject', type: 'string' },
+                { name: 'Description', type: 'string' },
+                { name: 'Location', type: 'string' },
+                    
+                    
+                { name: 'StartTime', type: 'date', format: "yyyy-MM-dd HH:mm" },
+                { name: 'EndTime', type: 'date', format: "yyyy-MM-dd HH:mm" },
+                { name: 'ThemeColor', type: 'string' },
+                { name: 'IsFullDay', type: 'bool' },
+            { name: 'Recurrence', type: 'string' },
+            { name: 'RecurrencePattern', type: 'string' },
+            { name: 'RecurrenceCount', type: 'string' },
+            { name: 'RecurrenceInterval', type: 'string' }
+            ],
+                
+            url: '/main/GetEvents',
+            id: 'EventId',
+        };
+        //console.log(source);
+        var adapter = new $.jqx.dataAdapter(source);
+        console.log(adapter),
+        $("#scheduler").jqxScheduler({
+                
+            date: new $.jqx.date(),
+            width: 1050,
+            height: 500,
+            source: adapter,
+            view: 'monthView',
+            theme: 'energyblue',
+            showLegend: true,
+            ready: function () {
+                //$("#scheduler").jqxScheduler('ensureAppointmentVisible', 'id1');
+            },
+            resources:
+            {
+                colorScheme: "scheme06",
+                dataField: "calendar",
+                source: new $.jqx.dataAdapter(source),
+                    
+            },
+            appointmentDataFields:
+            {
+                allDay: "IsFullDay",
+                color: "ThemeColor",
+                from: "StartTime",
+                to: "EndTime",
+                id: "EventId",
+                description: "Description",
+                location: "Location",
+                subject: "Subject",
+                recurrencePattern:"RecurrencePattern",
+                    
+                        
+                        
+                        
+                    //count: "RecurrenceCount",
+                    //interval: "RecurrenceInterval"
+                    //recurrenceException: "recurrenceException"
+                    //style: "ThemeColor != null ? ThemeColor : null",
+                    //resourceId: "calendar"
+                },
+                views:
+                [
+                    'dayView',
+                    'weekView',
+                    'monthView',
+                    'agendaView'
+                ]
+            });
+            //var appointmentsArray = $('#scheduler').jqxScheduler('getAppointments');
+            //console.log(appointmentsArray);
+            $("#scheduler").on('appointmentDelete', function (event) {
+                var args = event.args;
+                var appointment = args.appointment;
+                
+                $.ajax({
+                    type: 'POST',
+                    url: '/main/DeleteEvent',
+                    
+                    data: { 'eventId': appointment.id },
+                    success: function (data) {
+                        alert("Event successufully deleted");
+                        
+                    },
+                    error: function () {
+                        alert('failed');
+                        
+                    }
+                });
+                
+            });
+            $("#scheduler").on('appointmentClick', function (event) {
+                var args = event.args;
+                var appointment = args.appointment;
+                var isRecurrenceDate =appointment.recurrencePattern;
+                console.log(isRecurrenceDate);
+            });
+            $("#scheduler").on('appointmentAdd', function (event) {
+                var args = event.args;                
+                var appointment = args.appointment;
+                console.log(appointment);
+                var appointmentsArray = $('#scheduler').jqxScheduler('getAppointments');
+                
+                var data = {
+                    EventId: appointment.id,
+                    Subject: appointment.subject,
+                    StartTime: new $.jqx.date($('#scheduler').jqxScheduler('getAppointmentProperty', appointment.id, 'from')).toString(),
+                    EndTime: new $.jqx.date($('#scheduler').jqxScheduler('getAppointmentProperty', appointment.id, 'to')).toString(),
+                    Description: appointment.description,
+                    //ThemeColor: $('#scheduler').jqxScheduler('getAppointmentProperty', appointment.id, 'background').toString(),
+                    IsFullDay: appointment.allDay,
+                    Recurrence: appointment.recurrencePattern != null ? appointment.recurrencePattern.freq : appointment.recurrencePattern,
+                    Location:appointment.location,
+                    RecurrenceCount: appointment.recurrencePattern.count != null ? appointment.recurrencePattern.count : '1000',
+                    RecurrenceInterval: appointment.recurrencePattern.interval != null ? appointment.recurrencePattern.interval : '1',
+                }
+                
+                $.ajax({
+                    type: 'POST',
+                    url: '/main/AddEvent',                    
+                    data: data,                    
+                    success: function (data) {
+                        console.log("Event successufully added");
+                    },
+                    error: function () {
+                        alert('failed');                        
+                    }
+                });
+                console.log(appointmentsArray);
+            });
+
+            $("#scheduler").on('appointmentChange', function (event) {
+                var args = event.args;
+
+                var appointment = args.appointment;
+                
+                var data = {
+                    EventId: appointment.id,
+                    Subject: appointment.subject,
+                    StartTime: new $.jqx.date($('#scheduler').jqxScheduler('getAppointmentProperty', appointment.id, 'from')).toString(),
+                    EndTime: new $.jqx.date($('#scheduler').jqxScheduler('getAppointmentProperty', appointment.id, 'to')).toString(),
+                    Description: appointment.description,
+                    //ThemeColor: $('#scheduler').jqxScheduler('getAppointmentProperty', appointment.id, 'background').toString(),
+                    IsFullDay: appointment.allDay,
+                    Recurrence: appointment.recurrencePattern != null ? appointment.recurrencePattern.freq : appointment.recurrencePattern,
+                    Location: appointment.location,
+                    RecurrenceCount: appointment.recurrencePattern.count != null ? appointment.recurrencePattern.count : '1000',
+                    RecurrenceInterval: appointment.recurrencePattern.interval != null ? appointment.recurrencePattern.interval : '1',
+
+                }
+                $.ajax({
+                    type: 'POST',
+                    url: '/main/SaveEvent',
+
+                    data: data,
+
+                    success: function (data) {
+                        console.log("Event successufully edited");
+
+                    },
+                    error: function () {
+                        alert('failed');
+
+                    }
+                });
+
+            });
+
+            $("#scheduler").on('editRecurrenceDialogOpen', function (event) {
+                var args = event.args;
+                var dialog = args.dialog;
+                var appointment = args.appointment;
+
+                console.log("editRecurrenceDialogOpen is raised");
+            });
+
+            $("#scheduler").on('editRecurrenceDialogClose', function (event) {
+                var args = event.args;
+                var dialog = args.dialog;
+                var appointment = args.appointment;
+
+                console.log("editRecurrenceDialogClose is raised");
+            });
+        });
+
+</script>
+    }
+<body class='default'>
+    <div id="scheduler"></div>
+</body>

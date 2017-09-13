@@ -1,0 +1,136 @@
+﻿<html>
+@model ValidationSample.Models.TestCase
+<head>
+    <script src="~/Scripts/jquery-3.1.1.min.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js "></script>
+    @{
+        ViewBag.Title = "DeleteTestCase";
+    }
+    <script type="text/javascript">
+    $(document).ready(function () {
+        $("#chkElgibility").click(function () {
+            var value = false;
+            //debugger;
+            var click = confirm("Are you Sure you want to delete this Testcase");
+            
+            if (click)
+            {
+                value = true;
+            }
+            
+            return value;
+            
+
+
+        });
+
+    });
+    </script>
+</head>
+<body>
+    <h2>Delete Test Case</h2>
+
+    
+    <div>
+
+        <hr />
+        <dl class="dl-horizontal">
+            <dt>
+                @*@Html.DisplayNameFor(model => model.TestSuiteId)*@
+                <label class="control-label col-md-2">Test Suite ID<span>:</span> </label>
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.TestSuiteId)
+            </dd>
+
+            <dt>
+                @*@Html.DisplayNameFor(model => model.PipelineStageId)*@
+                <label class="control-label col-md-2">Pipeline Stage Id<span>:</span> </label>
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.PipelineStageId)
+            </dd>
+
+            <dt>
+                @*@Html.DisplayNameFor(model => model.TestCaseTypeId)*@
+                <label class="control-label col-md-2">Testcase Type Id<span>:</span> </label>
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.TestCaseTypeId)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.TestCaseName)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.TestCaseName)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Description)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Description)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.IsActive)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.IsActive)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.IsObsolete)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.IsObsolete)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.ObsoleteReason)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.ObsoleteReason)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.CreatedDate)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.CreatedDate)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.CreatedBy)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.CreatedBy)
+            </dd>
+
+        </dl>
+
+        @using (Html.BeginForm("DeleteTestCase", "Home", Model))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="form-actions no-color">
+                <input type="submit" value="Delete" id="chkElgibility" class="btn btn-default" /> |
+                @Html.ActionLink("Back to TestCases", "GetAllTestCases")
+            </div>
+        }
+    </div>
+</body>
+</html>

@@ -1,0 +1,61 @@
+﻿
+@{
+    ViewBag.Title = "GetAllTestcaseLogsJSGrid";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.css" />
+<link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid-theme.min.css" />
+@section Scripts{
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.js"></script>
+    <script type="text/javascript">
+
+        $(function () {
+
+            $("#jsGrid").jsGrid({
+                height: "auto",
+                width: "auto",
+
+                sorting: true,
+                paging: true,
+                autoload: false,
+
+                controller: {
+                    loadData: function () {
+                        var d = $.Deferred();
+
+                        $.ajax({
+                            url: "/main/GetTestcaseLogs",
+                            dataType: "json"
+                        }).done(function (response) {
+                            d.resolve(response.value);
+                        });
+
+                        return d.promise();
+                    }
+                },
+
+                fields: [
+                    { name: "TestCaseLogId", type: "number" },
+                    { name: "TestInstanceId", type: "number"},
+                    {
+                        name: "TestCaseId", type: "number"                        
+                    },
+                    {
+                        name: "ResultType", type: "number"                       
+                    },
+                    { name: "EventStartTime", type: "date" },
+                    { name: "EventEndTime", type: "date" },
+                    { name: "Exception", type: "textarea" },
+                    { name: "CreatedDate", type: "date" },
+                    { name: "CreatedBy", type: "text" },
+                ]
+            });
+
+        });
+</script>
+}
+<div id="jsGrid">
+
+</div>
+

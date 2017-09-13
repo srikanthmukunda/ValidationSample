@@ -1,0 +1,107 @@
+﻿@model ValidationSample.Models.TestCase
+    @{
+        Layout = null;
+}
+<script>
+    $("#status").click(function () {
+        //var val = document.getElementById('obsRsn').value;
+        if (($("#status").val() == '1' || $("#status").val() == '3')) {
+            //document.getElementById('obsRsn').value = "";
+            document.getElementById('obsRsn').disabled = true;
+        }
+        else {
+            document.getElementById('obsRsn').disabled = false;
+            //document.getElementById('obsRsn').value = val;
+        }
+    });
+    $("#chkElgibility").click(function () {
+        var click = true;
+        if ($("#status").val() == '0')
+        {
+            $('label.errStatus').show().text('Select Status');
+            $("#status").focus();
+            click = false;
+        }
+        return click;
+    });
+    
+</script>
+<h2>Save Test Case</h2>
+@using (Html.BeginForm("Save", "Home", FormMethod.Post, new { id = "popupForm" }))
+{
+    if (Model != null && Model.TestCaseId > 0)
+    {
+        @Html.HiddenFor(a => a.TestCaseId)
+    }
+
+    <div class="form-group">
+        <label>Testsuite</label>
+        @*@Html.TextBoxFor(a => a.TestSuiteId, new { @class = "form-control" })*@
+        @Html.DropDownListFor(a => a.TestSuiteId, new SelectList(ViewBag.TestSuitesList, "TestSuiteId", "TestSuite1"), "--Type/Dragdown--", htmlAttributes: new { @name = "testSuiteId", @class = "form-control", @id = "testSuiteId", @ng_model = "testSuiteId"})
+        @Html.ValidationMessageFor(a => a.TestSuiteId,null, new { @style = "color:red;" })
+    </div>
+    <div class="form-group">
+        <label>Pipeline Stage</label>
+        @*@Html.TextBoxFor(a => a.PipelineStageId, new { @class = "form-control" })*@
+        @Html.DropDownListFor(model => model.PipelineStageId, new SelectList(ViewBag.PipelineStageList, "PipelineStageId", "PipelineStage1"), "--Type/Dragdown--", htmlAttributes: new { @name = "pplId", @class = "form-control", @id = "pplId" })
+        @Html.ValidationMessageFor(a => a.PipelineStageId, null, new { @style = "color:red;" })
+    </div>
+    <div class="form-group">
+        <label>TestCase Type</label>
+        @*@Html.TextBoxFor(a => a.TestCaseTypeId, new { @class = "form-control" })*@
+        @Html.DropDownListFor(model => model.TestCaseTypeId, new SelectList(ViewBag.TestCaseTypeList, "TestCaseTypeId", "TestCaseType1"), "--Type/Dragdown--", htmlAttributes: new { @name = "tstId", @class = "form-control", @id = "tstId" })
+        @Html.ValidationMessageFor(a => a.TestCaseTypeId, null, new { @style = "color:red;" })
+    </div>
+    <div class="form-group">
+        <label>Testcase Name</label>
+        @Html.TextBoxFor(a => a.TestCaseName, new { @class = "form-control" })
+        @Html.ValidationMessageFor(a => a.TestCaseName, null, new { @style = "color:red;" })
+    </div>
+    <div class="form-group">
+        <label>Description</label>
+        @Html.TextBoxFor(a => a.Description, new { @class = "form-control" })
+        @Html.ValidationMessageFor(a => a.Description, null, new { @style = "color:red;" })
+    </div>
+    @*<div class="form-group">
+        <label>Is Active</label>
+        @Html.CheckBoxFor(a => a.IsActive, new { @class = "form-control" })
+        @Html.ValidationMessageFor(a => a.IsActive, null, new { @style = "color:red;" })
+    </div>
+    <div class="form-group">
+        <label>Is Obsolete</label>
+        @Html.CheckBoxFor(a => a.IsObsolete, new { @class = "form-control" })
+        @Html.ValidationMessageFor(a => a.IsObsolete, null, new { @style = "color:red;" })
+    </div>*@
+    <div class="form-group">
+        <label>Status</label>
+        @{
+            List<SelectListItem> StatusList = new List<SelectListItem>();
+
+            StatusList.Add(new SelectListItem { Text = "--Select--", Value = "0" });
+            StatusList.Add(new SelectListItem { Text = "Active", Value = "1" });
+            StatusList.Add(new SelectListItem { Text = "Obsolete", Value = "2" });
+            StatusList.Add(new SelectListItem { Text = "Skipped", Value = "3" });
+
+        }
+        @Html.DropDownList("status", StatusList, null, new
+                       {
+                           @id = "status",
+                           @name = "status",
+                           @class = "form-control",
+                           
+                           
+                       })
+        <span class="clearfix">
+            <label class="errStatus" style="display: none; color:red" for="status"></label>
+        </span></div>
+    <div class="form-group">
+        <label>Obsolete Reason</label>
+        <input type="text" class="form-control" id="obsRsn" name= "obsRsn" />
+        @*@Html.TextBox(*@
+        @*@Html.TextBoxFor(a => a.ObsoleteReason, new { @class = "form-control",@id= "obsRsn",@name= "obsRsn" })*@
+        @Html.ValidationMessageFor(a => a.ObsoleteReason, null, new { @style = "color:red;" })
+    </div>
+    <div>
+        <input type="submit" value="Save" id="chkElgibility" />
+    </div>
+}

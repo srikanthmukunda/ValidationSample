@@ -1,0 +1,151 @@
+﻿
+@{
+    ViewBag.Title = "GetAllTestcaseLogsInfinite";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+@section Scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var currentPage = 1;
+            loadPageData(currentPage);
+            $(window).scroll(function () {
+                if ($(window).scrollTop() == $(document).height() - $(window).height()) {
+                    currentPage += 1;
+                    loadPageData(currentPage);
+                }
+            });
+
+            function loadPageData(currentPageNumber) {
+                $.ajax({
+                    url: 'GetTestcaseLogs2',
+                    
+                    dataType: "json",
+                    data: { pageNumber: currentPageNumber, pageSize: 50 },
+                    success: function (data) {
+                        var employeeTable = $('#tblTstlog tbody');
+                        $(data).each(function (index, log) {
+                            var startDate = dtConvFromJSON(log.EventStartTime);
+                            var endDate = dtConvFromJSON(log.EventEndTime);
+                            var createdDate = dtConvFromJSON(log.CreatedDate);
+                            employeeTable.append('<tr><td>' + log.TestCaseLogId + '</td><td>'
+                                + log.TestInstanceId + '</td><td>' + log.TestCaseId
+                                + '</td><td>' + log.ResultType + '</td><td>' + startDate + '</td><td>' + endDate +
+                                '</td><td>' + log.Exception + '</td><td>' + createdDate + '</td><td>' + log.CreatedBy + '</td></tr>');
+                        });
+                    },
+                    error: function (err) {
+                        alert(err);
+                    }
+                });
+            }
+            function dtConvFromJSON(date) {
+                if (date == null) return '';
+                var r = /\/Date\(([0-9]+)\)\//gi
+                var matches = date.match(r);
+                if (matches == null) return '';
+                var result = matches.toString().substring(6, 19);
+                var epochMilliseconds = result.replace(
+                /^\/Date\(([0-9]+)([+-][0-9]{4})?\)\/$/,
+                '$1');
+                var b = new Date(parseInt(epochMilliseconds));
+                var c = new Date(b.toString());
+                var curr_date = c.getDate();
+                var curr_month = c.getMonth() + 1;
+                var curr_year = c.getFullYear();
+                var curr_h = c.getHours();
+                var curr_m = c.getMinutes();
+                var curr_s = c.getSeconds();
+                var curr_offset = c.getTimezoneOffset() / 60
+                var d = curr_month.toString() + '/' + curr_date + '/' + curr_year + " " + curr_h + ':' + curr_m + ':' + curr_s;
+                return d;
+            }
+            
+        });
+        function search() {
+            var input, filter, table, tr, td, i;
+            input = document.getElementById("myInput");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("tblTstlog");
+            tr = table.getElementsByTagName("tr");
+            for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td")[6];
+                if (td) {
+                    if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
+        }
+    </script>
+    }
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        #myInput {
+            /*background-image: url('/css/searchicon.png');*/
+            background-position: 10px 10px;
+            background-repeat: no-repeat;
+            /*width: 100%;*/
+            font-size: 16px;
+            /*padding: 12px 20px 12px 40px;
+            border: 1px solid #ddd;*/
+            margin-bottom: 12px;
+        }
+
+        #tblTstlog {
+            border-collapse: collapse;
+            width: 100%;
+            border: 1px solid #ddd;
+            font-size: 18px;
+        }
+
+            #tblTstlog th, #tblTstlog td {
+                text-align: left;
+                padding: 12px;
+            }
+
+            #tblTstlog tr {
+                border-bottom: 1px solid #ddd;
+            }
+
+                #tblTstlog tr.header, #tblTstlog tr:hover {
+                    background-color: #f1f1f1;
+                }
+    </style>
+</head>
+<body style="font-family:Arial">
+    <div class="container">
+        <h3>Jquery table with Infinite scroll</h3>
+        <div style="position:relative">
+            <input type="text" id="myInput" onkeyup="search()" placeholder="Search for Exceptions.." title="Type in a name">
+            <table id="tblTstlog" class="table table-responsive table-striped table-bordered" border="1" style="border-collapse:collapse; ">
+                <thead>
+                    <tr>
+                        <th>Test Case LogId</th>
+                        <th>Test Instance Id</th>
+                        <th>Testcase Id</th>
+                        <th>Result Type</th>
+                        <th>Event Start Time</th>
+                        <th>Event End Time</th>
+                        <th>Exception</th>
+                        <th>Created Date</th>
+                        <th>Created By</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        </div>
+</body>
+</html>
+
+
+

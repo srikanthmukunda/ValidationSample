@@ -1,0 +1,57 @@
+﻿@model ValidationSample.Models.TestCase
+@{
+    Layout = null;
+}
+<h2>Delete Employee</h2>
+@using (Html.BeginForm("Delete", "Home", FormMethod.Post, new { id = "popupForm" }))
+{
+    @Html.HiddenFor(a => a.TestCaseId)
+    <div class="form-group">
+        <label>Testsuite</label>
+        <p>@Model.TestSuiteId</p>
+    </div>
+
+    <div class="form-group">
+        <label>Pipeline Stage</label>
+        <p>@Model.PipelineStageId</p>
+    </div>
+
+    <div class="form-group">
+        <label>TestCase Type</label>
+        <p>@Model.TestCaseTypeId</p>
+    </div>
+
+    <div class="form-group">
+        <label>Testcase Name</label>
+        <p>@Model.TestCaseName</p>
+    </div>
+
+    <div class="form-group">
+        <label>Description</label>
+        <p>@Model.Description</p>
+    </div>
+
+    <div class="form-group">
+        <label>Is Active</label>
+        <p>@Model.IsActive</p>
+    </div>
+
+    <div class="form-group">
+        <label>Is Obsolete</label>
+        <p>@Model.IsObsolete</p>
+    </div>
+
+    <div class="form-group">
+        <label>Obsolete Reason</label>
+        <p>@Model.ObsoleteReason</p>
+    </div>
+
+    <div class="form-group">
+        <label>Created By</label>
+        <p>@Model.CreatedBy</p>
+    </div>
+
+    <div>
+        <input type="submit" value="Delete" />
+    </div>
+}

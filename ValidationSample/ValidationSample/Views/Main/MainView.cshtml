@@ -1,0 +1,665 @@
+﻿@using ValidationDAL;
+<body>
+
+    @{
+        ViewBag.Title = "MainView";
+        Layout = "~/Views/Shared/_Layout.cshtml";
+    }
+    <link rel="stylesheet" media="screen" href="~/Content/css/MyClass.css" />
+    <link rel="stylesheet" type="text/css" href="~/Content/DataTables/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.15/css/jquery.dataTables_themeroller.css">
+    <link href="~/Content/themes/base/jquery-ui.min.css" rel="stylesheet" />
+  
+    @section Scripts{
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js "></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-route.js"></script>
+    @*<script  type="text/javascript" src="~/Scripts/jquery-3.1.1.min.js"></script>*@
+    <script type="text/javascript" src="~/Scripts/jquery.validate.min.js"></script>
+    <script type="text/javascript" src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+
+    
+
+    <script type="text/javascript" language="javascript" src="~/Scripts/DataTables/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/4.0.2/bootstrap3-typeahead.js"></script>
+    
+    <script src="~/Scripts/MyApp.js"></script>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+    
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            function format(d) {
+                
+                                    
+                return '<table id="tstCsLog" class="table table-bordered  table-hover display" cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;>' +
+                                ' <tr id="tslId"></tr><tbody></tbody><tfoot></tfoot></table>'
+                   
+                   
+                                //'<th>Test Instance Id</th>' 
+                                //'<th>Result Type</th>' 
+                                //'<th>Event Start Time</th>' 
+                                //'<th>Event End Time</th>' 
+                                //'<th>Exception</th>' 
+                                //'<th>Created Date</th>' 
+                                
+            }
+            
+            var myTable = '';
+            var oTable = $('#tstCs').DataTable({
+                
+           
+                "bDestroy": true,
+                "processing": true,
+                "autoWidth": false,
+                "orderMulti": false,
+                //"dom": '<"top"i>rt<"bottom"lp><"clear">',
+                "ajax": {
+                    "url": 'http://localhost:33838/Home/GetAllTestCases',
+                    "type": "POST",
+                    "datatype": "json"
+
+                },
+
+                "columns": [
+                    {
+                        "className": 'portlet-header',
+                        "orderable": false,
+                        "data": null,
+                        "defaultContent": ''
+                    },
+                { "data": "TestCaseId", "name": "TestCaseId", "autoWidth": true },
+                //{ "data": "TestCaseId", "width" : '5%' },
+                { "data": "TestSuiteId", "name": "TestSuiteId", "autoWidth": true },
+                { "data": "PipelineStageId", "name": "PipelineStageId", "autoWidth": true },
+                { "data": "TestCaseTypeId", "name": "TestCaseTypeId", "autoWidth": true },
+                { "data": "TestCaseName", "name": "TestCaseName", "autoWidth": true },
+                { "data": "Description", "name": "Description", "autoWidth": true },
+                { "data": "IsActive", "name": "IsActive", "autoWidth": true },
+                { "data": "IsObsolete", "name": "IsObsolete", "autoWidth": true },
+                { "data": "ObsoleteReason", "name": "ObsoleteReason", "autoWidth": false },
+                {
+                    "data": "CreatedDate", "name": "CreatedDate", "render": function dtConvFromJSON(data) {
+                        if (data == null) return '1/1/1950';
+                        var r = /\/Date\(([0-9]+)\)\//gi
+                        var matches = data.match(r);
+                        if (matches == null) return '1/1/1950';
+                        var result = matches.toString().substring(6, 19);
+                        var epochMilliseconds = result.replace(
+                        /^\/Date\(([0-9]+)([+-][0-9]{4})?\)\/$/,
+                        '$1');
+                        var b = new Date(parseInt(epochMilliseconds));
+                        var c = new Date(b.toString());
+                        var curr_date = c.getDate();
+                        var curr_month = c.getMonth() + 1;
+                        var curr_year = c.getFullYear();
+                        var curr_h = c.getHours();
+                        var curr_m = c.getMinutes();
+                        var curr_s = c.getSeconds();
+                        var curr_offset = c.getTimezoneOffset() / 60
+                        var d = curr_month.toString() + '/' + curr_date + '/' + curr_year + " " + curr_h + ':' + curr_m + ':' + curr_s;
+                        return d;
+                    }, "autoWidth": true
+                },
+                { "data": "CreatedBy", "name": "CreatedBy", "autoWidth": true },
+                {
+                    "data": "TestCaseId", "width": "50px", "render": function (data) {
+                        return '<a class="popup" href="//localhost:33838/Home/Save/' + data + '"><span class="glyphicon glyphicon-edit"></span></a>';
+                    }
+                },
+                {
+                    "data": "TestCaseId", "width": "50px", "render": function (data) {
+                        return '<a class="popup" href="//localhost:33838/Home/Delete/' + data + '"><span class="glyphicon glyphicon-trash"></span></a>';
+                    }
+                }
+
+                ],
+                "order": [[1, 'asc']]
+
+       
+
+            });
+
+            var g_tr = '';
+            $('#tstCs tbody').on('click', 'td.portlet-header', function () {
+                var tr = $(this).closest('tr');
+                g_tr = tr;
+                var row = oTable.row(g_tr);
+                //if (oTableLogs != null) {
+                //    oTableLogs.destroy();
+                //}
+                if (row.child.isShown()) {
+                    // This row is already open - close it
+                    row.child.hide();
+                    tr.removeClass('shown');
+                }
+                else {
+                    
+                    
+                    $('table#tstCsLog').remove();
+                    
+                    //$("#tstCsLog").dataTable().fnDestroy();
+                   
+                    // Open this row
+                    //row.child.hide();
+                    //tr.removeClass('shown');
+                    
+                    //$("tstCsLog").attr("destroy", true);
+                    row.child(format(row.data())).show();
+                    showDataTable(row.data());
+                    tr.addClass('shown');
+                    
+                }
+                
+            });
+            function showDataTable(d)
+            {
+                
+             var oTableLogs = $('#tstCsLog').DataTable({
+
+
+                    "bDestroy": true,
+                    "processing": true,
+                    "autoWidth": false,
+                    "orderMulti": false,
+                       
+                     fixedHeader: {
+                        header: true,
+                        footer: true
+                     },
+                     "searching": true,
+                    "ajax": {
+                        "url": 'http://localhost:33838/Home/GetAllTestCaseLogs',
+                        data: {'testCaseId':d.TestCaseId},
+                        "type": "GET",
+                        
+                        "datatype": "json",
+                        
+                        error: function (xhr, ajaxOptions, thrownError) {
+                            console.log(xhr.status);
+                            console.log(xhr.responseText);
+                            console.log(thrownError);
+                        }
+
+                    },
+
+                    "columns": [
+                       
+                    { "data": "TestCaseLogId", "name": "TestCaseLogId", "autoWidth": true, sTitle: "Test Case LogId" },
+                    //{ "data": "TestCaseId", "width" : '5%' },
+                    { "data": "TestInstanceId", "name": "TestInstanceId", "autoWidth": true, sTitle: "Test Instance Id" },
+                    {
+                        "data": "ResultType", "name": "ResultType", "render": function nullData(data) {
+                            if (data == null) return 'null';
+                            return data
+                        }, "autoWidth": true, sTitle: "Result Type", searchable:true
+                    },
+                    {
+                        "data": "EventStartTime", "name": "EventStartTime", "render": function dtConvFromJSON(data) {
+
+                            if (data == null) return '1/1/1950';
+                            var r = /\/Date\(([0-9]+)\)\//gi
+                            var matches = data.match(r);
+                            if (matches == null) return '1/1/1950';
+                            var result = matches.toString().substring(6, 19);
+                            var epochMilliseconds = result.replace(
+                            /^\/Date\(([0-9]+)([+-][0-9]{4})?\)\/$/,
+                            '$1');
+                            var b = new Date(parseInt(epochMilliseconds));
+                            var c = new Date(b.toString());
+                            var curr_date = c.getDate();
+                            var curr_month = c.getMonth() + 1;
+                            var curr_year = c.getFullYear();
+                            var curr_h = c.getHours();
+                            var curr_m = c.getMinutes();
+                            var curr_s = c.getSeconds();
+                            var curr_offset = c.getTimezoneOffset() / 60
+                            var d = curr_month.toString() + '/' + curr_date + '/' + curr_year + " " + curr_h + ':' + curr_m + ':' + curr_s;
+                            return d;
+                        }, "autoWidth": true, sTitle: "Event Start Time"
+                    },
+                    {
+                        "data": "EventEndTime", "name": "EventEndTime", "render": function dtConvFromJSON(data) {
+
+                            if (data == null) return '1/1/1950';
+                            var r = /\/Date\(([0-9]+)\)\//gi
+                            var matches = data.match(r);
+                            if (matches == null) return '1/1/1950';
+                            var result = matches.toString().substring(6, 19);
+                            var epochMilliseconds = result.replace(
+                            /^\/Date\(([0-9]+)([+-][0-9]{4})?\)\/$/,
+                            '$1');
+                            var b = new Date(parseInt(epochMilliseconds));
+                            var c = new Date(b.toString());
+                            var curr_date = c.getDate();
+                            var curr_month = c.getMonth() + 1;
+                            var curr_year = c.getFullYear();
+                            var curr_h = c.getHours();
+                            var curr_m = c.getMinutes();
+                            var curr_s = c.getSeconds();
+                            var curr_offset = c.getTimezoneOffset() / 60
+                            var d = curr_month.toString() + '/' + curr_date + '/' + curr_year + " " + curr_h + ':' + curr_m + ':' + curr_s;
+                            return d;
+                        }, "autoWidth": true, sTitle: "Event End Time"
+                    },
+                    { "data": "Exception", "name": "Exception", "autoWidth": true, sTitle: "Exception" },
+
+                    {
+                        "data": "CreatedDate", "name": "CreatedDate", "render": function dtConvFromJSON(data) {
+                           
+                            if (data == null) return '1/1/1950';
+                            var r = /\/Date\(([0-9]+)\)\//gi
+                            var matches = data.match(r);
+                            if (matches == null) return '1/1/1950';
+                            var result = matches.toString().substring(6, 19);
+                            var epochMilliseconds = result.replace(
+                            /^\/Date\(([0-9]+)([+-][0-9]{4})?\)\/$/,
+                            '$1');
+                            var b = new Date(parseInt(epochMilliseconds));
+                            var c = new Date(b.toString());
+                            var curr_date = c.getDate();
+                            var curr_month = c.getMonth() + 1;
+                            var curr_year = c.getFullYear();
+                            var curr_h = c.getHours();
+                            var curr_m = c.getMinutes();
+                            var curr_s = c.getSeconds();
+                            var curr_offset = c.getTimezoneOffset() / 60
+                            var d = curr_month.toString() + '/' + curr_date + '/' + curr_year + " " + curr_h + ':' + curr_m + ':' + curr_s;
+                            return d;
+                        }, "autoWidth": true, sTitle: "Created Date"
+                    },
+                    { "data": "CreatedBy", "name": "CreatedBy", "autoWidth": true, sTitle: "Created By" }
+
+                    ],
+                    "order": [[0, 'asc']]
+
+                });
+                
+             return myTable;
+            } $("#tstCsLog").append(
+                        $('<tfoot/>').append($("#tstCsLog thead tr").clone())
+                    );
+            $('#tstCsLog tfoot th').each(function () {
+                var title = $('#tstCsLog thead th').eq($(this).index()).text();
+                $(this).html('<input type="text" style="width:130px;" placeholder="' + title + '" />');
+            });
+
+            //oTableLogs.columns().every(function () {
+            //    var dataTableColumn = this;
+
+            //    oTableLogs.columns(0).footer().find('input').on('keyup change', function () {
+            //        alert('1');
+            //        dataTableColumn.search(this.value).draw();
+            //    });
+            //});
+            $('#tstCs thead #active').each(function () {
+
+                $(this).html('<input type="text" style="width:70px;" placeholder="Active" />');
+            });
+            $('#tstCs thead #obs').each(function () {
+
+                $(this).html('<input type="text" style="width:70px;" placeholder="Obsolete" />');
+            });
+            //$('#tstCs thead #tstName').each(function () {
+
+            //    $(this).html('<input type="text" id="act" style="width:180px;" placeholder="Testcase Name" />');
+            //});
+            $('#ddlTstsuite').on('keyup change', function () {
+                
+                    oTable.columns(2).search($('#ddlTstsuite').val()).draw();          
+                    autoComplete();
+            });
+            $('#ddlPplStage').on('keyup change', function () {
+
+                oTable.columns(3).search($('#ddlPplStage').val()).draw();
+                autoComplete();
+            });
+            $('#ddlTstcsType').on('keyup change', function () {
+
+                oTable.columns(4).search($('#ddlTstcsType').val()).draw();
+                autoComplete();
+            });
+            
+            $('#autoCom').on('keyup change click', function () {
+
+                oTable.columns(5).search($('#autoCom').val()).draw();
+
+            });
+            
+            oTable.columns().every(function () {
+                var dataTableColumn = this;
+                
+                $(this.header()).find('input').on('keyup change', function () {
+                    dataTableColumn.search(this.value).draw();
+                });
+            });
+            $('.showHideColumn').on('click', function () {
+                var tableColumn = oTable.column($(this).attr('data-columnindex'));
+                tableColumn.visible(!tableColumn.visible());
+            });
+
+            //});
+            $('.tablecontainer').on('click', 'a.popup', function (e) {
+                e.preventDefault();
+                OpenPopup($(this).attr('href'));
+            })
+            function OpenPopup(pageUrl) {
+                var $pageContent = $('<div/>');
+                $pageContent.load(pageUrl, function () {
+                    $('#popupForm', $pageContent).removeData('validator');
+                    $('#popupForm', $pageContent).removeData('unobtrusiveValidation');
+                    $.validator.unobtrusive.parse('form');
+
+                });
+
+                $dialog = $('<div class="popupWindow" style="overflow:auto"></div>')
+                      .html($pageContent)
+                      .dialog({
+                          draggable: false,
+                          autoOpen: false,
+                          resizable: true,
+                          model: true,
+                          title: 'Validation Popup',
+                          height: 550,
+                          width: 600,
+                          close: function () {
+                              $dialog.dialog('destroy').remove();
+                          }
+                      })
+                $('.popupWindow').on('submit', '#popupForm', function (e) {
+                    var url = $('#popupForm')[0].action;
+                    $.ajax({
+                        type: "POST",
+                        url: url,
+                        data: $('#popupForm').serialize(),
+                        success: function (data) {
+                            if (data.status) {
+                                $dialog.dialog('close');
+                                $("#dialog-message").dialog({
+                                    modal: true,
+                                    buttons: {
+                                        Ok: function () {
+                                            $(this).dialog("close");
+                                        }
+                                    }
+                                });
+                                oTable.ajax.reload();
+                            }
+                        }
+                    })
+
+                    e.preventDefault();
+                })
+
+                $dialog.dialog('open');
+            }
+
+
+            //}
+            function load1() {
+                $('#content').show();
+                $('#content').load("/TestSuite/GetAllTestSuites");
+            }
+            
+            //$("#autoCom").autocomplete({
+            //    source: names[0],
+
+            //});
+            
+
+            
+            
+        });
+
+        $(function () {
+            var icons = {
+                header: "ui-icon-circle-arrow-e",
+                activeHeader: "ui-icon-circle-arrow-s"
+            };
+            $("#accordion")
+              .accordion({
+                  header: "> div > h3",
+                  collapsible: true,
+                  width: "50%",
+                  icons: icons
+              })
+              .sortable({
+                  axis: "y",
+                  handle: "h3",
+                  stop: function (event, ui) {
+                      // IE doesn't register the blur when sorting
+                      // so trigger focusout handlers to remove .ui-state-focus
+                      ui.item.children("h3").triggerHandler("focusout");
+
+                      // Refresh accordion to handle new order
+                      $(this).accordion("refresh");
+                  }
+              });
+            
+            autoComplete();
+            //monkeyPatchAutocomplete()
+        });
+        
+        var names = [];
+        var elemAutocomplete = '';
+        function autoComplete()
+        {
+            names=[]
+            
+            $.ajax({
+                type: "GET",
+                url: "/Home/GetAllTestCaseNames/",
+                data: { 'testSuiteId': $('#ddlTstsuite').val() != '' ? $('#ddlTstsuite').val() : 0, 'pplStageId': $('#ddlPplStage').val() != '' ? $('#ddlPplStage').val() : 0, 'tstTypeId': $('#ddlTstcsType').val() != '' ? $('#ddlTstcsType').val() : 0 },
+                success: function (result) {
+                    $.each(result, function (i, v) {
+                        names.push(v);
+                    })
+                    
+
+                },
+                error: function (error) {
+                    alert('failed');
+                }
+            })
+            var $elem =$("#autoCom").autocomplete({
+                source: function (request, response) {
+                    var matcher = new RegExp( $.ui.autocomplete.escapeRegex(request.term), "i");
+                    response($.grep(names, function (value) {
+
+                        return matcher.test(value);
+                    }));
+                }
+
+            }),
+            elemAutocomplete = $elem.data("ui-autocomplete") || $elem.data("autocomplete");
+            if (elemAutocomplete) {
+                elemAutocomplete._renderItem = function (ul, item) {
+                    var newText = String(item.value).replace(
+                            new RegExp(this.term, "gi"),
+                            "<span style='font-weight:bold;color:Blue;'>$&</span>");
+
+                    return $("<li></li>")
+                        .data("item.autocomplete", item)
+                        .append("<p>" + newText + "</p>")
+                        .appendTo(ul);
+                };
+            }
+            
+            
+        }
+        
+        
+        
+    </script>
+}
+
+    @*<div class="table">*@
+    @*@if (TempData["tstId"] != null)
+        {
+            <h3>Testcase deleted with Testcase ID @TempData["tstId"]</h3>
+        }*@
+
+    @*<div class="row">
+        @*<div id="link" class=" contentright modal-container " style="text-align:center">
+            <h5 style="color : brown;">Select Table</h5>
+            @*<a href="#testcase" id="getalltstcs" onclick="load()">TestCase</a>*@
+    <br />
+    @*<a href="#testsuite" id="getalltstsuts" onclick="load1()">TestSuite</a>*@
+    <style>
+       .ui-autocomplete {
+    max-height: 150px;
+   
+    overflow-y: auto;
+    
+    overflow-x: hidden;
+  }
+        
+       * html .ui-autocomplete {
+    height: 150px;
+    
+  }
+        .showHideColumn {
+            cursor: pointer;
+            color:#337ab7;
+        }
+        td.portlet-header {
+            background: url('../../Content/img/details_open.png') no-repeat center center;
+            
+            cursor: pointer;
+        }
+        tr.shown td.portlet-header {
+            background: url('../../Content/img/download.png') no-repeat center center;
+           
+        }
+    </style>
+    @{
+        List<SelectListItem> TestsuiteList = new List<SelectListItem>();
+        //TestsuiteList.Add(new SelectListItem { Text = "--Select--", Value = "0" });
+        var dal = new ValidationRepository();
+        var tstSuiteList = dal.GetAllTestSuites();
+
+        foreach (var refobj in tstSuiteList)
+        {
+            TestsuiteList.Add(new SelectListItem
+            {
+                Text = refobj.TestSuite1.ToString(),
+                Value = refobj.TestSuiteId.ToString()
+            });
+        }
+
+        List<SelectListItem> PPlList = new List<SelectListItem>();
+        //TestsuiteList.Add(new SelectListItem { Text = "--Select--", Value = "0" });
+
+        var pPlList = dal.GetAllPipelineStages();
+
+        foreach (var refobj in pPlList)
+        {
+            PPlList.Add(new SelectListItem
+            {
+                Text = refobj.PipelineStage1.ToString(),
+                Value = refobj.PipelineStageId.ToString()
+            });
+        }
+
+        List<SelectListItem> TstTypeList = new List<SelectListItem>();
+        //TestsuiteList.Add(new SelectListItem { Text = "--Select--", Value = "0" });
+
+        var tstTypeLst = dal.GetAllTestCaseTypes();
+
+        foreach (var refobj in tstTypeLst)
+        {
+            TstTypeList.Add(new SelectListItem
+            {
+                Text = refobj.TestCaseType1.ToString(),
+                Value = refobj.TestCaseTypeId.ToString()
+            });
+        }
+    }
+
+    <div id="dialog-message" title="Operation complete" style="display:none">
+        <p>
+            <span class="ui-icon ui-icon-circle-check" style="float:left; margin:0 7px 50px 0;"></span>
+            Your action is successfully implemented and is reflected in the table.
+        </p>
+       
+    </div>
+    <div id="content" style="width:90%; margin:0 auto" class="tablecontainer">
+        
+        <a class="popup" href="//localhost:33838/Home/Save/0" style="margin-bottom:20px; margin-top:20px;"><b><span class="glyphicon glyphicon-plus"></span>Add New Testcase</b></a>
+        
+           <div id="accordion">
+               <div class="group">
+                   <h3><b>Filters</b></h3>
+                   <div>
+                       <label>Testsuite:</label>    @Html.DropDownList("ddlTstsuite", TestsuiteList, "--Select--", new { id = "ddlTstsuite", name = "ddlTstsuite" })
+                       <label>Pipeline Stage:</label>@Html.DropDownList("ddlPplStage", PPlList, "--Select--", new { id = "ddlPplStage", name = "ddlPplStage" })
+                       <label>Testcase Type:</label>@Html.DropDownList("ddlTstcsType", TstTypeList, "--Select--", new { id = "ddlTstcsType", name = "ddlTstcsType" })
+                       <label for="autoCom">Name:</label><input type="text" style="width:174px;" placeholder="Testcase Name" id="autoCom" />
+                   </div>
+                   </div>
+               <div class="group">
+                   <h3><b>Show/Hide Column :</b></h3>
+                   <div>
+                       <a class="showHideColumn" data-columnindex="1" style="color:#337ab7">Testcase Id</a> -
+                       <a class="showHideColumn" data-columnindex="2" style="color:#337ab7">Testsuite Id</a> -
+                       <a class="showHideColumn" data-columnindex="3" style="color:#337ab7">Pipeline StageId</a> -
+                       <a class="showHideColumn" data-columnindex="4" style="color:#337ab7">Testcase TypeId</a> -
+                       <a class="showHideColumn" data-columnindex="5" style="color:#337ab7">Testcase Name</a> -
+                       <a class="showHideColumn" data-columnindex="6" style="color:#337ab7">Description</a> -
+                       <a class="showHideColumn" data-columnindex="7" style="color:#337ab7">Is Active</a> -
+                       <a class="showHideColumn" data-columnindex="8" style="color:#337ab7">Is Obsolete</a> -
+                       <a class="showHideColumn" data-columnindex="9" style="color:#337ab7">ObsoleteReason</a> -
+                       <a class="showHideColumn" data-columnindex="10" style="color:#337ab7">Created Date</a> -
+                       <a class="showHideColumn" data-columnindex="11" style="color:#337ab7">Created By</a>
+                   </div>
+                   </div>
+               </div> 
+            
+        <br />
+        <table id="tstCs" class="table table-bordered  table-hover display">
+            <thead>
+                <tr>
+                    <th>Action</th>
+                    <th>Test case Id</th>
+                    <th>Test suite Id</th>
+                    <th>Pipeline StageId</th>
+                    <th>Test case TypeId</th>
+                    <th id="tstName">Testcase Name</th>
+                    <th>Description</th>
+                    <th id="active">Is Active</th>
+                    <th id="obs">Is Obsolete</th>
+                    <th>ObsoleteReason</th>
+                    <th>Created Date</th>
+                    <th>Created By</th>
+                    <th>Edit</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+            <tfoot>
+                <tr>
+                    <th>Action</th>
+                    <th>Test case Id</th>
+                    <th>Test suite Id</th>
+                    <th>Pipeline StageId</th>
+                    <th>Test case TypeId</th>
+                    <th id="tstName">Testcase Name</th>
+                    <th>Description</th>
+                    <th id="active">Is Active</th>
+                    <th id="obs">Is Obsolete</th>
+                    <th>ObsoleteReason</th>
+                    <th>Created Date</th>
+                    <th>Created By</th>
+                    <th>Edit</th>
+                    <th>Delete</th>
+                </tr>
+            </tfoot>
+        </table>
+        </div>
+
+    @*</div>*@
+
+    @*</div>*@
+</body>
+

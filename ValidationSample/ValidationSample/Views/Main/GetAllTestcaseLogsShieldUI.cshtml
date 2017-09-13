@@ -1,0 +1,123 @@
+﻿
+@{
+    ViewBag.Title = "TestcaseLogs";
+    Layout = "~/Views/Shared/_Layout2.cshtml";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        
+    <link id="themecss" rel="stylesheet" type="text/css" href="//www.shieldui.com/shared/components/latest/css/light/all.min.css" />
+    <script src="~/Scripts/jquery-3.1.1.min.js"></script>
+    @*<script type="text/javascript" src="//www.shieldui.com/shared/components/latest/js/jquery-1.11.1.min.js"></script>*@
+    <script type="text/javascript" src="//www.shieldui.com/shared/components/latest/js/shieldui-all.min.js"></script>
+</head>
+<body class="theme-light">
+    <div id="grid"></div>
+    <script type="text/javascript">
+    $(function () {
+        //var gridSource = new shield.DataSource({
+        //    remote: {
+        //        operations: ["skip", "take"],
+        //        read: function (params, success, error) {
+        //            var skip = gridSource.skip || 0,
+        //                take = gridSource.take || 20,
+        //                data = [];
+        //            for (var i = skip; i < skip + take; i++) {
+        //                var item = {};
+        //                for (var j = 0; j < 8; j++) {
+        //                    item["col" + j] = "row " + i + " cell " + j;
+        //                }
+        //                data.push(item);
+        //            }
+        //            success({
+        //                data: data,
+        //                total: 1000000
+        //            });
+        //        }
+        //    },
+        //    schema: {
+        //        data: "data",
+        //        total: "total"
+        //    }
+        //});
+        //$("#grid").shieldGrid({
+        //    dataSource: gridSource,
+        //    height: 400,
+        //    scrolling: {
+        //        virtual: true
+        //    },
+        //    columns: (function () {
+        //        var cols = [];
+        //        for (var i = 0; i < 8; i++) {
+        //            cols.push({
+        //                field: "col" + i,
+        //                width: 140
+        //            });
+        //        }
+        //        return cols;
+        //    })()
+        //});
+        $("#grid").shieldGrid({
+            dataSource: {
+                remote: {
+                    read: {
+                        url: "/main/GetTestcaseLogs",
+                        dataType: "json",
+                        operations: ["sort", "skip", "take"],
+                        data: function (params) {
+                            var odataParams = {};
+                            if (params.sort && params.sort.length) {
+                                odataParams["$orderby"] = window.orderFields[params.sort[0].path].path + (params.sort[0].desc ? " desc" : "");
+                            }
+                            if (params.skip != null) {
+                                odataParams["$skip"] = params.skip;
+                            }
+                            if (params.take != null) {
+                                odataParams["$top"] = params.take;
+                            }
+                            return odataParams;
+                        }
+                    }
+                },
+                schema: {
+                    data: "value",
+                    total: function (result) {
+                        return result["odata.count"];
+                    },
+                    fields: window.orderFields = {
+                        "TestCaseLogId": { path: "TestCaseLogId" },
+                        "TestInstanceId": { path: "TestInstanceId" },
+                        "TestCaseId": { path: "TestCaseId" },
+                        "ResultType": { path: "ResultType" },
+                        "EventStartTime": { path: "EventStartTime", type: "date" },
+                        "EventEndTime": { path: "EventEndTime", type: "date" },
+                        "Exception": { path: "Exception" },
+                        "CreatedDate": { path: "CreatedDate", type: "date" },
+                        "CreatedBy": { path: "Exception" }
+                        
+                    }
+                }
+            },
+            height: 400,
+            scrolling: {
+                virtual: true
+            },
+            sorting: true,
+            columns: [
+                { field: "TestCaseLogId", width: 100 },
+                { field: "TestInstanceId", width: 80 },
+                { field: "TestCaseId", width: 80 },
+                { field: "ResultType",  width: 80 },
+                { field: "EventStartTime",  width: 160 },
+                { field: "EventEndTime",  width: 160 },
+                { field: "Exception", width: 160 },
+                { field: "CreatedDate",  width: 160 },
+                { field: "CreatedBy", width: 160 }
+            ]
+        });
+    });
+    </script>
+</body>
+</html>

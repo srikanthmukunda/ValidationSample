@@ -1,0 +1,164 @@
+﻿<html ng-app="myApp" ng-controller="addCtrl">
+@model ValidationSample.Models.TestSuite
+<head>
+    @{
+        ViewBag.Title = "AddTestSuite";
+        Layout = "~/Views/Shared/_Layout.cshtml";
+    }
+    <script src="~/Scripts/jquery-3.1.1.min.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+    <script src="~/Scripts/MyApp.js"></script>
+    <script type="text/javascript">
+        //function change() {
+
+
+        //        if (($("#status").val() == '1' || $("#status").val() == '3')) {
+        //            document.getElementById('obsRsn').disabled = true;
+        //        }
+        //        else
+        //        {
+        //            document.getElementById('obsRsn').disabled = false;
+        //        }
+
+        //}
+
+        $(document).ready(function () {
+
+        //function chkElgibility()
+        //{
+        //    alert('0');
+        //}
+
+            $("#chkElgibility").click(function () {
+
+
+            //debugger;
+            var click = true;
+
+
+
+
+            if (($("#tstStName").val() == '')) {
+                $('label.errtstSuite').show().text('Enter Test Suite Name');
+                $("#tstStName").focus();
+               click = false;
+            }
+            
+            else if (($("#status").val() == '')) {
+                $('label.errtstSuite').hide();
+                $('label.errStatus').show().text('Select Status');
+                $("#status").focus();
+                click = false;
+            }
+
+            else
+            {
+                $('label.errtstSuite').hide();
+                $('label.errStatus').hide();
+            }
+
+
+
+
+
+
+            return click;
+            //$("#Form").submit();
+
+
+
+        });
+
+    });
+    </script>
+</head>
+
+
+<body>
+    @*<h3>{{msg}}</h3>*@
+    <h2>Add Test Suite</h2>
+
+
+    @using (Html.BeginForm("AddTestSuite", "TestSuite", new { name = "myform" }))
+    {
+
+        @Html.AntiForgeryToken()
+
+
+        <div class="form-horizontal">
+
+            <hr />
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <div class="form-group">
+                <label class="control-label col-md-2">Test Suite Name<span>:</span><span style="color:red">*</span> </label>
+                <div class="col-md-10">
+                    <input type="text"  id="tstStName" name="tstStName" ng-model="tstStName" />
+                    <span class="clearfix">
+                        <label ng-model="errtstSuite" class="errtstSuite" style="display: none; color:red" for="testSuiteId"></label>
+                    </span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-md-2">Description<span>:</span> </label>
+                <div class="col-md-10">
+                    <input type="text" id="desc" name="desc" ng-model="desc" />
+                    <span class="clearfix">
+                        <label class="errPpl" style="display: none; color:red" for="pplId"></label>
+                    </span>
+                </div>
+            </div>
+
+            
+            <div class="form-group">
+                <label class="control-label col-md-2">Status<span>:</span><span style="color:red">*</span> </label>
+                
+                    <div class="col-md-10">
+                        @{
+                            List<SelectListItem> StatusList = new List<SelectListItem>();
+
+                            StatusList.Add(new SelectListItem { Text = "Active", Value = "1" });
+                            StatusList.Add(new SelectListItem { Text = "InActive", Value = "2" });                       
+
+                        }
+                        @Html.DropDownList("status", StatusList, "--Select--", new
+                       {
+                           @id = "status",
+                           @name = "status",
+                           @class = "form-control",
+                          
+                           @ng_model = "status"
+                       })
+
+                        <span class="clearfix">
+                            <label class="errStatus" style="display: none; color:red" for="tstName"></label>
+                        </span>
+                    </div>
+               
+            </div>           
+
+            <div class="form-group">
+                <label class="control-label col-md-2">TestSuite Owner<span>:</span> </label>
+                <div class="col-md-10">
+                    <input type="text" id="tstOwn" name="tstOwn" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" id="chkElgibility" value="Create" class="btn btn-default" />
+                </div>
+            </div>
+        </div>
+
+                            }
+
+    @*<div>
+            @Html.ActionLink("Back to TestCases", "GetAllTestCases")
+        </div>*@
+
+</body>
+</html>

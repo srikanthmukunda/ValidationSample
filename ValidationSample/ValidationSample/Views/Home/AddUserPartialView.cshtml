@@ -1,0 +1,140 @@
+﻿<html>
+@model ValidationSample.Models.Admin
+<head>
+    <script src="~/Scripts/jquery-3.1.1.min.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js "></script>
+
+    
+    <script type="text/javascript">
+    $(document).ready(function () {
+        $("#chkElgibility").click(function () {
+
+            //debugger;
+            var click = true;
+            //$('#HdnbtnSubmit').val(this.value);
+            //var country = $("#ddlCountry").val();
+
+            //$("#hdnWorkAuthorizationType").val($("#visatypeddl").val());
+
+
+
+            if (($("#name").val() == '')) {
+               $('label.errName').show().text('Enter User Name');
+               $("#name").focus();
+               click = false;
+            }
+            else if (($("#pwd").val() == '')) {
+                $('label.errName').hide();
+                $('label.errPwd').show().text('please enter Password');
+                $("#pwd").focus();
+                click = false;
+            }
+            else if (($("#confirmPwd").val() == '')) {
+                $('label.errName').hide();
+                $('label.errPwd').hide();
+                $('label.errCnPwd').show().text('please confirm Password');
+                $("#confirmPwd").focus();
+                click = false;
+            }
+            else if ((($("#pwd").val())!=($("#confirmPwd").val())))
+            {
+                $('label.errName').hide();
+                $('label.errPwd').hide();
+                $('label.errCnPwd').show().text('Passwords didnot match. Please enter correct password');
+                $("#confirmPwd").focus();
+                click = false;
+            }
+            else if (($("#pwd").length < 8 )|| ($("#pwd").length >20))
+            {
+                $('label.errName').hide();
+                $('label.errPwd').show().text('Password length should be greater than 8 and less than 20');
+                $("#pwd").focus();
+                click = false;
+            }
+            else
+            {
+                $('label.errName').hide();
+                $('label.errPwd').hide();;
+                $('label.errCnPwd').hide();
+            }
+
+
+
+            //else {
+            //    $('label.errName').show().text('');
+
+            //}
+
+
+            return click;
+            //$("#Form").submit();
+
+
+
+        });
+
+    });
+    </script>
+</head>
+<body>
+    <h2>Register</h2>
+    @if (TempData["errmsg"] != null)
+    {
+        <h3 style="color:orangered">@TempData["errmsg"]</h3>
+    }
+
+    <div ng-controller="HomeController">
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="form-horizontal">
+
+                <hr />
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                <div class="form-group">
+                    <label class="control-label col-md-2">User Name<span>:</span><span style="color:red">*</span> </label>
+                    <div class="col-md-10">
+                        <input type="text" maxlength="50" id="name" name="name" />
+                        <span class="clearfix">
+                            <label class="errName" style="display: none; color:red" for="name"></label>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label col-md-2">Password<span>:</span><span style="color:red">*</span> </label>
+                    <div class="col-md-10">
+                        <input type="password" maxlength="20" id="pwd" name="pwd" />
+                        <span class="clearfix">
+                            <label class="errPwd" style="display: none; color:red" for="pwd"></label>
+                        </span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-2">Confirm Password<span>:</span><span style="color:red">*</span> </label>
+                    <div class="col-md-10">
+                        <input type="password" maxlength="20" id="confirmPwd" name="confirmPwd" />
+                        <span class="clearfix">
+                            <label class="errCnPwd" style="display: none; color:red" for="confirmPwd"></label>
+                        </span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <input type="submit" id="chkElgibility" value="Create" style="background-color:darkolivegreen;color:blanchedalmond" class="btn btn-default" />
+                    </div>
+                </div>
+            </div>
+        }
+
+        <div>
+            @Html.ActionLink("Back to Login", "Login")
+        </div>
+
+    </div>
+</body>
+</html>

@@ -1,0 +1,232 @@
+﻿@model ValidationSample.Models.TestCaseLog
+
+@{
+    ViewBag.Title = "Testcase Logs";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" href="~/Content/JQWidgets/jqx.base.css" type="text/css" />
+<link href="~/Content/themes/base/jquery-ui.min.css" rel="stylesheet" />
+@section Scripts{
+<script src="~/Scripts/JQWidgets/jqx-all.js"></script>
+<script src="~/Scripts/JQWidgets/jqxcore.js"></script>
+<script src="~/Scripts/JQWidgets/jqxbuttons.js"></script>
+<script src="~/Scripts/JQWidgets/jqxscrollbar.js"></script>
+<script src="~/Scripts/JQWidgets/jqxdata.js"></script>
+<script src="~/Scripts/JQWidgets/jqxmenu.js"></script>
+<script src="~/Scripts/JQWidgets/jqxlistbox.js"></script>
+<script src="~/Scripts/JQWidgets/jqxdropdownlist.js"></script>
+<script src="~/Scripts/JQWidgets/jqxgrid.js"></script>
+<script src="~/Scripts/JQWidgets/jqxgrid.selection.js"></script>
+<script src="~/Scripts/JQWidgets/jqxgrid.columnsresize.js"></script>
+<script src="~/Scripts/JQWidgets/jqxgrid.filter.js"></script>
+<script src="~/Scripts/JQWidgets/jqxgrid.sort.js"></script>
+<script src="~/Scripts/JQWidgets/jqxgrid.pager.js"></script>
+<script src="~/Scripts/JQWidgets/jqxgrid.grouping.js"></script>
+<script type="text/javascript" src="~/Scripts/jquery.validate.min.js"></script>
+<script type="text/javascript" src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+
+
+
+
+<script type="text/javascript" src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/4.0.2/bootstrap3-typeahead.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+<script type="text/javascript">
+    //$(document).ready(function () {
+    //    var oTableLogs = $('#tstCsLog').DataTable({
+    //        "bDestroy": true,
+    //        "processing": true,            
+    //        "orderMulti": false,
+    //        fixedHeader: {
+    //            header: true,
+    //            footer: true
+    //        },
+    //        "searching": true,
+    //        "ajax": {
+    //            "url": 'http://localhost:33838/Main/GetTestcaseLogs',                
+    //            "type": "GET",
+    //            "datatype": "json",
+    //            error: function (xhr, ajaxOptions, thrownError) {
+    //                console.log(xhr.status);
+    //                console.log(xhr.responseText);
+    //                console.log(thrownError);
+    //            }
+    //        },
+    //        "columns": [
+    //        { "data": "TestCaseLogId", "name": "TestCaseLogId", "autoWidth": true },
+    //        //{ "data": "TestCaseId", "width" : '5%' },
+    //        { "data": "TestInstanceId", "name": "TestInstanceId", "autoWidth": true },
+    //        {
+    //            "data": "ResultType", "name": "ResultType", "render": function nullData(data) {
+    //                if (data == null) return 'null';
+    //                return data
+    //            }, "autoWidth": true, searchable: true
+    //        },
+    //        {
+    //            "data": "EventStartTime", "name": "EventStartTime", "render": function dtConvFromJSON(data) {
+    //                if (data == null) return '1/1/1950';
+    //                var r = /\/Date\(([0-9]+)\)\//gi
+    //                var matches = data.match(r);
+    //                if (matches == null) return '1/1/1950';
+    //                var result = matches.toString().substring(6, 19);
+    //                var epochMilliseconds = result.replace(
+    //                /^\/Date\(([0-9]+)([+-][0-9]{4})?\)\/$/,
+    //                '$1');
+    //                var b = new Date(parseInt(epochMilliseconds));
+    //                var c = new Date(b.toString());
+    //                var curr_date = c.getDate();
+    //                var curr_month = c.getMonth() + 1;
+    //                var curr_year = c.getFullYear();
+    //                var curr_h = c.getHours();
+    //                var curr_m = c.getMinutes();
+    //                var curr_s = c.getSeconds();
+    //                var curr_offset = c.getTimezoneOffset() / 60
+    //                var d = curr_month.toString() + '/' + curr_date + '/' + curr_year + " " + curr_h + ':' + curr_m + ':' + curr_s;
+    //                return d;
+    //            }, "autoWidth": true, 
+    //        },
+    //        {
+    //            "data": "EventEndTime", "name": "EventEndTime", "render": function dtConvFromJSON(data) {
+    //                if (data == null) return '1/1/1950';
+    //                var r = /\/Date\(([0-9]+)\)\//gi
+    //                var matches = data.match(r);
+    //                if (matches == null) return '1/1/1950';
+    //                var result = matches.toString().substring(6, 19);
+    //                var epochMilliseconds = result.replace(
+    //                /^\/Date\(([0-9]+)([+-][0-9]{4})?\)\/$/,
+    //                '$1');
+    //                var b = new Date(parseInt(epochMilliseconds));
+    //                var c = new Date(b.toString());
+    //                var curr_date = c.getDate();
+    //                var curr_month = c.getMonth() + 1;
+    //                var curr_year = c.getFullYear();
+    //                var curr_h = c.getHours();
+    //                var curr_m = c.getMinutes();
+    //                var curr_s = c.getSeconds();
+    //                var curr_offset = c.getTimezoneOffset() / 60
+    //                var d = curr_month.toString() + '/' + curr_date + '/' + curr_year + " " + curr_h + ':' + curr_m + ':' + curr_s;
+    //                return d;
+    //            }, "autoWidth": true
+    //        },
+    //        { "data": "Exception", "name": "Exception", "autoWidth": true },
+    //        {
+    //            "data": "CreatedDate", "name": "CreatedDate", "render": function dtConvFromJSON(data) {
+    //                if (data == null) return '1/1/1950';
+    //                var r = /\/Date\(([0-9]+)\)\//gi
+    //                var matches = data.match(r);
+    //                if (matches == null) return '1/1/1950';
+    //                var result = matches.toString().substring(6, 19);
+    //                var epochMilliseconds = result.replace(
+    //                /^\/Date\(([0-9]+)([+-][0-9]{4})?\)\/$/,
+    //                '$1');
+    //                var b = new Date(parseInt(epochMilliseconds));
+    //                var c = new Date(b.toString());
+    //                var curr_date = c.getDate();
+    //                var curr_month = c.getMonth() + 1;
+    //                var curr_year = c.getFullYear();
+    //                var curr_h = c.getHours();
+    //                var curr_m = c.getMinutes();
+    //                var curr_s = c.getSeconds();
+    //                var curr_offset = c.getTimezoneOffset() / 60
+    //                var d = curr_month.toString() + '/' + curr_date + '/' + curr_year + " " + curr_h + ':' + curr_m + ':' + curr_s;
+    //                return d;
+    //            }, "autoWidth": true
+    //        },
+    //        { "data": "CreatedBy", "name": "CreatedBy", "autoWidth": true }
+    //        ],
+    //        "order": [[0, 'asc']]
+    //    });
+    //});
+    $(document).ready(function () {
+        var source =
+            {
+                dataType: 'json',
+                dataFields: [
+                    { name: 'TestCaseLogId', type: 'int' },
+                    { name: 'TestInstanceId', type: 'int' },
+                    { name: 'TestCaseId', type: 'int' },
+                    { name: 'ResultType', type: 'int' },
+
+
+                    { name: 'EventStartTime', type: 'date', format: "yyyy-MM-dd HH:mm" },
+                    { name: 'EventEndTime', type: 'date', format: "yyyy-MM-dd HH:mm" },
+                    { name: 'Exception', type: 'string' },
+                    { name: 'CreatedDate', type: 'date', format: "yyyy-MM-dd HH:mm" },
+                { name: 'CreatedBy', type: 'string' },
+
+                ],
+
+                url: '/main/GetTestcaseLogs',
+                id: 'TestCaseLogId',
+            };
+        //console.log(source);
+        var dataAdapter = new $.jqx.dataAdapter(source, {
+                    formatData: function (data) {
+                        $.extend(data, {
+                            featureClass: "P",
+                            style: "full",
+                            username: "jqwidgets"
+                            
+                        });
+                        return data;
+                    }
+                }
+            );
+        $("#jqxgrid").jqxGrid(
+            {
+                source: dataAdapter,
+                columnsresize: true,
+                columns: [
+                    { text: 'Test Case LogId', datafield: 'TestCaseLogId', width: 150 },
+                    { text: 'Test Instance Id', datafield: 'TestInstanceId', width: 150 },
+                    { text: 'Testcase Id', datafield: 'TestCaseId', cellsformat: 'f', width: 170 },
+                    { text: 'Result Type', datafield: 'ResultType', minwidth: 110 },
+                { text: 'Event Start Time', datafield: 'EventStartTime', minwidth: 110 },
+                { text: 'Event End Time', datafield: 'EventEndTime', minwidth: 110 },
+                { text: 'Exception', datafield: 'Exception', minwidth: 110 },
+                { text: 'Created Date', datafield: 'CreatedDate', minwidth: 110 },
+                { text: 'Created By', datafield: 'CreatedBy', minwidth: 110 }
+                ]
+            });
+    });
+    </script>
+}
+@*<div id="content" style="width:90%; margin:0 auto" class="tablecontainer">
+    <table id="tstCsLog" class="table table-bordered  table-hover display">
+        <thead>
+            <tr>
+                <th>Test Case LogId</th>
+                <th>Test Instance Id</th>
+                <th>Result Type</th>
+                <th>Event Start Time</th>
+                <th>Event End Time</th>
+                <th>Exception</th>
+                
+                <th>Created Date</th>
+                <th>Created By</th>
+                @*<th>Edit</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+        <tfoot>
+            <tr>
+                <th>Test Case LogId</th>
+                <th>Test Instance Id</th>
+                <th>Result Type</th>
+                <th>Event Start Time</th>
+                <th>Event End Time</th>
+                <th>Exception</th>
+                >
+                <th>Created Date</th>
+                <th>Created By</th>
+                @*<th>Edit</th>
+                <th>Delete</th>
+        </tfoot>
+    </table>
+    </div>*@
+<body class='default'>
+<div id='jqxWidget' style="font-size: 13px; font-family: Verdana; float: left;">
+    <div id="jqxgrid"></div>
+</div>
+</body>

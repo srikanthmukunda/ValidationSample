@@ -1,0 +1,191 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    @model ValidationSample.Models.TestCaseLog
+
+    @{
+        ViewBag.Title = "TestcaseLogs";
+        Layout = "~/Views/Shared/_Layout.cshtml";
+    }
+    @*<script src="~/Scripts/jquery-3.1.1.min.js"></script>*@
+
+    @*<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>*@
+        
+    
+    <link rel="stylesheet" type="text/css" href="~/Content/W2UI/w2ui-1.5.rc1.min.css" />
+       
+</head>
+<body>
+
+    <div id="main" style="width: 100%; height: 400px;overflow: hidden;"></div>
+    <br>
+    <label>
+        <input type="checkbox" id="autoLoad" onclick="refreshGrid(this.checked)" checked>
+        Auto Load
+    </label>
+    <input type="checkbox" id="singleOrMulti" onclick="w2ui['grid'].multiSelect = this.checked; w2ui['grid'].selectNone();">
+    <label for="singleOrMulti">Multi Select</label>
+@section Scripts{
+    <script type="text/javascript" src="~/Scripts/W2UI/w2ui-1.5.rc1.min.js"></script>
+    <script type="text/javascript">
+        var currentPage = 1;
+var config = {
+    grid: {
+        name: 'grid',
+        header: 'Testcase Logs',
+        url: {get:'/main/GetTestcaseLogs'},
+        method: 'GET',
+        datatype: 'json',
+        limit: 50,
+        offset: 0,
+        multiSearch: true,
+        multiSelect: false,
+        autoLoad: false,
+        limit: 100,
+        reorderColumns: false,
+        show: {
+            footer    : true,
+            toolbar: true,
+            header: true,
+            lineNumbers: true,
+            selectColumn: false,
+            expandColumn: false,
+            toolbarAdd: true,
+            toolbarDelete: true,
+            toolbarSave: true,
+            toolbarEdit: true
+        },
+        reorderColumns: true,
+        reorderRows: true,
+        sortData: [{ field: 'TestCaseLogId', direction: 'asc' }],
+        searches: [
+            { field: 'TestCaseLogId', caption: 'Test Case LogId', type: 'int' },
+            { field: 'TestInstanceId', caption: 'Test Instance Id', type: 'int' },
+            { field: 'TestCaseId', caption: 'Testcase Id', type: 'int' },
+            { field: 'ResultType', caption: 'Result Type', type: 'int' },                 
+            { field: 'EventStartTime', caption: 'Event Start Time', type: 'date' },           
+            { field: 'EventEndTime', caption: 'Event End Time', type: 'date' },
+            { field: 'Exception', caption: 'Exception', type: 'text' },
+            { field: 'CreatedDate', caption: 'Created Date', type: 'date' },
+            { field: 'CreatedBy', caption: 'Created By', type: 'text' },
+        ],
+        columns: [
+            { field: 'TestCaseLogId', caption: 'Test Case LogId', size: '130px', attr: "align=center", sortable: true, info: true, resizable: true },
+            { field: 'TestInstanceId', caption: 'Test Instance Id', size: '100px', attr: "align=center", sortable: true, resizable: true },
+            { field: 'TestCaseId', caption: 'Testcase Id', size: '100px', attr: "align=center", sortable: true, resizable: true },
+            { field: 'ResultType', caption: 'Result Type', size: '100px', attr: "align=center", sortable: true, resizable: true },
+            {
+                field: 'EventStartTime', caption: 'Event Start Time', size: '200px', attr: "align=center", render: function dtConvFromJSON(record, index, column_index) {
+                    if (record.EventStartTime == null) return '1/1/1950';
+                    var r = /\/Date\(([0-9]+)\)\//gi
+                    var matches = record.EventStartTime.match(r);
+                    if (matches == null) return '1/1/1950';
+                    var result = matches.toString().substring(6, 19);
+                    var epochMilliseconds = result.replace(
+                    /^\/Date\(([0-9]+)([+-][0-9]{4})?\)\/$/,
+                    '$1');
+                    var b = new Date(parseInt(epochMilliseconds));
+                    var c = new Date(b.toString());
+                    var curr_date = c.getDate();
+                    var curr_month = c.getMonth() + 1;
+                    var curr_year = c.getFullYear();
+                    var curr_h = c.getHours();
+                    var curr_m = c.getMinutes();
+                    var curr_s = c.getSeconds();
+                    var curr_offset = c.getTimezoneOffset() / 60
+                    var d = curr_month.toString() + '/' + curr_date + '/' + curr_year + " " + curr_h + ':' + curr_m + ':' + curr_s;
+                    return d;
+                }, resizable: true
+            },
+            {
+                field: 'EventEndTime', caption: 'Event End Time', size: '200px', attr: "align=center", render: function dtConvFromJSON(record, index, column_index) {
+                    if (record.EventEndTime == null) return '1/1/1950';
+                    var r = /\/Date\(([0-9]+)\)\//gi
+                    var matches = record.EventEndTime.match(r);
+                    if (matches == null) return '1/1/1950';
+                    var result = matches.toString().substring(6, 19);
+                    var epochMilliseconds = result.replace(
+                    /^\/Date\(([0-9]+)([+-][0-9]{4})?\)\/$/,
+                    '$1');
+                    var b = new Date(parseInt(epochMilliseconds));
+                    var c = new Date(b.toString());
+                    var curr_date = c.getDate();
+                    var curr_month = c.getMonth() + 1;
+                    var curr_year = c.getFullYear();
+                    var curr_h = c.getHours();
+                    var curr_m = c.getMinutes();
+                    var curr_s = c.getSeconds();
+                    var curr_offset = c.getTimezoneOffset() / 60
+                    var d = curr_month.toString() + '/' + curr_date + '/' + curr_year + " " + curr_h + ':' + curr_m + ':' + curr_s;
+                    return d;
+                }, resizable: true
+            },
+            { field: 'Exception', caption: 'Exception', size: '200px', editable: { type: 'text' }, resizable: true },
+            {
+                field: 'CreatedDate', caption: 'Created Date', size: '200px', attr: "align=center", render: function dtConvFromJSON(record, index, column_index) {
+                    if (record.CreatedDate == null) return '1/1/1950';
+                    var r = /\/Date\(([0-9]+)\)\//gi
+                    var matches = record.CreatedDate.match(r);
+                    if (matches == null) return '1/1/1950';
+                    var result = matches.toString().substring(6, 19);
+                    var epochMilliseconds = result.replace(
+                    /^\/Date\(([0-9]+)([+-][0-9]{4})?\)\/$/,
+                    '$1');
+                    var b = new Date(parseInt(epochMilliseconds));
+                    var c = new Date(b.toString());
+                    var curr_date = c.getDate();
+                    var curr_month = c.getMonth() + 1;
+                    var curr_year = c.getFullYear();
+                    var curr_h = c.getHours();
+                    var curr_m = c.getMinutes();
+                    var curr_s = c.getSeconds();
+                    var curr_offset = c.getTimezoneOffset() / 60
+                    var d = curr_month.toString() + '/' + curr_date + '/' + curr_year + " " + curr_h + ':' + curr_m + ':' + curr_s;
+                    return d;
+                }, resizable: true
+            },
+            { field: 'CreatedBy', caption: 'Created By', size: '200px', attr: "align=center", resizable: true }
+        ],
+        //toolbar: {
+        //    items: [
+        //        { id: 'add', type: 'button', caption: 'Add Record', icon: 'w2ui-icon-plus' }
+        //    ],
+        //    onClick: function (event) {
+        //        if (event.target == 'add') {
+        //            w2ui.grid.add({ recid: w2ui.grid.records.length + 1 });
+        //        }
+        //    }
+        //},
+        onAdd: function (event) {
+            w2alert('add');
+        },
+        onEdit: function (event) {
+            w2alert('edit');
+        },
+        onDelete: function (event) {
+            console.log('delete has default behavior');
+        },
+        onSave: function (event) {
+            w2alert('save');
+        },
+        //onExpand: function (event) {
+        //    $('#' + event.box_id).html('<div style="padding: 10px; height: 100px">Expanded content</div>');
+        //}
+    }
+};
+
+function refreshGrid(auto) {
+    w2ui.grid.autoLoad = auto;
+    w2ui.grid.skip(0);
+}
+
+$(document).ready(function () {
+    
+    $('#main').w2grid(config.grid);
+});
+    </script>
+
+</body>
+</html>
+
+}

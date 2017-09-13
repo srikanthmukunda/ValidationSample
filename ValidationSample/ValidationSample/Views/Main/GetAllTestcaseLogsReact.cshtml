@@ -1,0 +1,169 @@
+﻿
+@{
+    ViewBag.Title = "GetAllTestcaseLogsReact";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h2>Testcase Logs with ReactJS</h2>
+<div id="griddata">
+
+</div>
+
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" />
+<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet" />
+@section Scripts{
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.6/react.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.6/react-dom.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script>
+    }
+<script type="text/babel">
+    var GridPager = React.createClass({
+    render : function(){
+    var li = [];
+    var pageCount = this.props.Size;
+    for(var i = 1; i <=pageCount; i++){
+    if(this.props.currentPage == i){
+    li.push(
+    <li key={i} className="active"><a href="#">{i}</a></li>);
+    }
+    else{
+    li.push(
+    <li key={i}><a href="#" onClick={this.props.onPageChanged.bind(null,i)}>{i}</a></li>);
+    }
+    }
+    return (
+    <ul className="pagination">{li}</ul>);
+    }
+    });
+
+    var TestcaseLogGridRow = React.createClass({
+    render : function(){
+    return (
+    <tr>
+        <td>{this.props.item.TestCaseLogId}</td>
+        <td>{this.props.item.TestInstanceId}</td>
+        <td>{this.props.item.TestCaseId}</td>
+        <td>{this.props.item.ResultType}</td>
+        <td>{this.props.item.EventStartTime}</td>
+        <td>{this.props.item.EventEndTime}</td>
+        <td>{this.props.item.Exception}</td>
+        <td>{this.props.item.CreatedDate}</td>
+        <td>{this.props.item.CreatedBy}</td>
+    </tr>
+    );
+    }
+    });
+
+    var TestcaseLogGridTable = React.createClass({
+    getInitialState: function(){
+    return {
+    Data : {
+                    List : [],
+                    totalPage : 0,
+                    sortColumnName : null,
+                    sortOrder : null,
+                    currentPage : 1,
+                    pageSize : 50
+                }
+    }
+    },
+    componentDidMount : function(){
+    this.populateData();
+    },
+    @*componentDidMount:function(){
+    
+    $.get(this.props.dataUrl, function(data){
+    if(this.isMounted()){
+    this.setState({
+    items: data
+    });
+    }
+    }.bind(this));
+    },*@
+       populateData: function(){
+            var params = {
+                pageSize : this.state.Data.pageSize,
+                currentPage : this.state.Data.currentPage
+            }
+            if(this.state.Data.sortColumnName){
+                params.sortColumnName = this.state.Data.sortColumnName;
+            }
+            if(this.state.Data.sortOrder){
+                params.sortOrder = this.state.Data.sortOrder;
+            }
+ 
+            $.ajax({
+                url : this.props.dataUrl,
+                type : 'GET',
+                data : params,
+                success : function(data){
+                    if(this.isMounted()){
+                        this.setState({
+                            Data : data
+                        });
+                    }
+                }.bind(this),
+                error: function(err){
+                    alert('Error');
+                }.bind(this)
+            });
+        },
+    pageChanged:function(pageNumber,e){
+            e.preventDefault();
+            this.state.Data.currentPage = pageNumber;
+            this.populateData();
+        },
+    sortChanged : function(sortColumnName, order , e){
+            e.preventDefault();
+            this.state.Data.sortColumnName = sortColumnName;
+            this.state.Data.currentPage = 1;
+            this.state.Data.sortOrder = order.toString().toLowerCase() == 'asc' ? 'desc':'asc';
+            this.populateData();
+        },
+    _sortClass : function(filterName){
+            return "fa fa-fw " + ((filterName == this.state.Data.sortColumnName) ? ("fa-sort-" + this.state.Data.sortOrder) : "fa-sort");
+        },
+    render : function(){
+    var rows = [];
+    this.state.Data.List.forEach(function(item){
+    rows.push(
+    <TestcaseLogGridRow key={item.TestCaseLogId} item={item} />);
+    });
+    return (
+    <div>
+    <table className="table table-bordered table-responsive">
+        <thead>
+            <tr>
+                <th onClick={this.sortChanged.bind(this,'TestCaseLogId',this.state.Data.sortOrder)}>Test Case LogId<i className={this._sortClass('TestCaseLogId')}></i></th>
+                <th onClick={this.sortChanged.bind(this,'TestInstanceId',this.state.Data.sortOrder)}>Test Instance Id<i className={this._sortClass('TestInstanceId')}></i></th>
+                <th onClick={this.sortChanged.bind(this,'TestCaseId',this.state.Data.sortOrder)}>Testcase Id<i className={this._sortClass('TestCaseId')}></i></th>
+                <th onClick={this.sortChanged.bind(this,'ResultType',this.state.Data.sortOrder)}>Result Type<i className={this._sortClass('ResultType')}></i></th>
+                <th onClick={this.sortChanged.bind(this,'EventStartTime',this.state.Data.sortOrder)}>Event Start Time<i className={this._sortClass('EventStartTime')}></i></th>
+                <th onClick={this.sortChanged.bind(this,'EventEndTime',this.state.Data.sortOrder)}>Event End Time<i className={this._sortClass('EventEndTime')}></i></th>
+                <th onClick={this.sortChanged.bind(this,'Exception',this.state.Data.sortOrder)}>Exception<i className={this._sortClass('Exception')}></i></th>
+                <th onClick={this.sortChanged.bind(this,'CreatedDate',this.state.Data.sortOrder)}>Created Date<i className={this._sortClass('CreatedDate')}></i></th>
+                <th onClick={this.sortChanged.bind(this,'CreatedBy',this.state.Data.sortOrder)}>Created By<i className={this._sortClass('CreatedBy')}></i></th>
+            </tr>
+        </thead>
+        <tbody>
+            {rows}
+        </tbody>
+    </table>
+        <GridPager Size={this.state.Data.totalPage} onPageChanged={this.pageChanged} currentPage={this.state.Data.currentPage} />
+        </div>);
+    }
+    });
+    ReactDOM.render(
+    <TestcaseLogGridTable dataUrl="http://localhost:33838/Main/GetTestcaseLogsReact" />,
+    document.getElementById('griddata')
+    );
+</script>
+<style>
+    #griddata th {
+        cursor: pointer;
+    }
+
+    .fa {
+        float: right;
+        margin-top: 4px;
+    }
+</style>

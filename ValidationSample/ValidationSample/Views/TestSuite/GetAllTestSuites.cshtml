@@ -1,0 +1,126 @@
+﻿<html ng-app="myApp">
+<head>
+    @model IEnumerable<ValidationSample.Models.TestSuite>
+
+    @{
+        ViewBag.Title = "TestSuite";
+        WebGrid gridTestCases = new WebGrid(Model, rowsPerPage: 5, canSort: true);
+    }
+
+    <link href="~/Content/Grid.css" rel="stylesheet" />
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js "></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-route.js"></script>
+    <script src="~/Scripts/jquery-3.1.1.min.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/Scripts/MyApp.js"></script>
+    <script type="text/javascript">
+
+        function Delete(id) {
+            //debugger;
+            var click = confirm("Are you Sure you want to delete this TestSuite?");
+            var val=id
+            if (click)
+            {
+                location.href = '@Url.Action("DeleteTestSuite", "TestSuite")?testSuiteId=' + id;
+            }
+
+        }
+        function Add() {
+
+            location.replace("http://localhost:33838/TestSuite/AddTestSuite")
+        }
+
+
+    </script>
+</head>
+<body>
+@using (Html.BeginForm("Index", "TestSuite"))
+{
+
+
+    <div ng-view></div>
+    <p>
+        @*@Html.ActionLink("Add New Test Case", "AddTestCase")*@
+        <br />
+
+        <input type="button" class="btn btn-default" style="background-color:darkolivegreen;color:blanchedalmond" value="Add New Test Suite" onclick="Add()" />
+        @*<a href="#!add" style="color:black"><b>ADD New Test Case</b></a>*@
+        
+    </p>
+    
+    <input type="text" class="fa fa-search" placeholder="Search TestSuite" id="srch" name="srch" /> 
+    <input type = "submit" name = "submit" value = "Search" />  
+    if (TempData["testStId"] != null)
+    {
+        <h3>New Testsuite added with Testsuite ID @TempData["testStId"]</h3>
+    }
+    if (TempData["testCsId1"] != null)
+    {
+        <h3>@TempData["testCsId1"]</h3>
+    }
+    if (TempData["tstId"] != null)
+    {
+        <h3>TestSuite deleted with TestSuite ID @TempData["tstId"]</h3>
+    }
+    if (TempData["update"] != null)
+    {
+        <h3>Testcase updated with Testcase ID @TempData["update"]</h3>
+    }
+
+    <br />
+   
+        if (Model!=null)
+        {
+
+
+            @gridTestCases.GetHtml(
+                            tableStyle: "Grid",
+                            fillEmptyRows: false,
+                            headerStyle: "gvRow",
+                            alternatingRowStyle: "alternate",
+                            rowStyle: "gvRow",
+                            footerStyle: "gvFooter",
+
+                            mode: WebGridPagerModes.All,
+                            firstText: "<< First",
+                            previousText: "< Prev",
+                            nextText: "Next >",
+                            lastText: "Last >>",
+                            columns: new[]
+                            {
+                    gridTestCases.Column("TestSuiteId",header:"TestSuite Id",canSort:true,format:@<text>
+        <span class="display-mode"><label>@item.TestSuiteId</label></span></text>),
+                    gridTestCases.Column("TestSuite1",header:"TestSuite Name",canSort:true,format:@<text>
+        <span class="display-mode"><label>@item.TestSuite1</label></span></text>, style:"col2Width"),
+                    gridTestCases.Column("TestSuiteDescription",header:"TestSuite Description",canSort:false,format:@<text>
+        <span class="display-mode"><label>@item.TestSuiteDescription</label></span></text>, style:"col2Width"),
+                    gridTestCases.Column("IsActive",header:"Is Active",canSort:false,format:@<text>
+        <span class="display-mode"><label>@item.IsActive</label></span></text>, style:"col2Width"),
+                    gridTestCases.Column("TestSuiteOwner",header:"TestSuite Owner",canSort:true,format:@<text>
+        <span class="display-mode"><label>@item.TestSuiteOwner</label></span></text>, style:"col2Width"),
+                    gridTestCases.Column("CreatedDate",header:"Created Date",canSort:true,format:@<text>
+        <span class="display-mode"><label>@item.CreatedDate</label></span></text>, style:"col2Width"),
+                    gridTestCases.Column("CreatedBy",header:"Created By",canSort:false,format:@<text>
+        <span class="display-mode"><label>@item.CreatedBy</label></span></text>, style:"col2Width"),
+                        
+                    @*gridTestCases.Column(null,header:null,canSort:false,format:@<text>
+        <span class="display-mode"><input type="button" class="btn btn-default" style="background-color:darkolivegreen;color:blanchedalmond" value="Update" onclick="window.location.href='@Url.Action("UpdateTestCase","Home",new RouteValueDictionary(new { testCaseId=item.TestCaseId,testSuiteId =item.TestSuiteId,pipeLineStageId= item.PipeLineStageId,testCaseTypeId=item.TestCaseTypeId,testCaseName=item.TestCaseName,description=item.Description,isActive=item.IsActive,isObsolete=item.IsObsolete,obsoleteReason=item.ObsoleteReason,createdDate=item.CreatedDate,createdBy=item.CreatedBy }))';" /></span></text>, style:"col2Width"),*@
+                gridTestCases.Column(null,header:null,canSort:false,format:@<text>
+        <span class="display-mode"><input type="button" class="btn btn-default" id="chkElgibility" style="background-color:darkolivegreen;color:blanchedalmond" value="Delete" onclick="Delete(@item.TestSuiteId)" /></span></text>, style:"col2Width")
+
+                            }
+
+                )
+
+
+    }
+    else
+    {
+        <h3 > Records not found </h3>
+    }
+
+
+}
+</body>
+</html>

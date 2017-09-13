@@ -1,0 +1,324 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - Validation</title>
+    @*<link href="~/Content/Site.css" rel="stylesheet" type="text/css" />*@
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="~/Scripts/modernizr-2.8.3.js"></script>
+    
+    <link href="~/Content/themes/base/jquery-ui.min.css" rel="stylesheet" />
+    
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+</head>
+<body style="background-image : url(/Content/img/MainLayout.jpg)">
+    
+    
+    <div class="navbar navbar-inverse navbar-fixed-top" style="background-color: rgba(255,255,255,0.5);" data-target="#myNavbar">
+        
+        <div class="container">
+            
+            <div class="navbar-header">
+                @*<span onclick="openNav()" style="font-size:30px;cursor:pointer">&#9776;</span>*@
+                @Html.ActionLink("Home", "MainView", "Main", new { area = "" }, new { style = "color:green;" , @class = "navbar-brand" })
+                <span class="noti glyphicon glyphicon-bell"><span class="count">&nbsp;</span></span>
+                <div class="noti-content">
+                    <div class="noti-top-arrow"></div>
+                    <ul id="notiContent"></ul>
+                </div>
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                @*@Html.ActionLink("Home", "GetAllTestCases", "Home", new { area = "" }, new { @class = "navbar-brand" })*@
+
+               
+            </div>
+            @*<div id="mySidenav" class="sidenav"  >
+                <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+                <a href="#">About</a>
+                <a href="#">Services</a>
+                <a href="#">Clients</a>
+                <a href="#">Contact</a>
+                
+                    <li>
+                        <a><span class="ui-icon ui-icon-disk"></span>Save</a>
+                    </li>
+                    <li>
+                        <div><span class="ui-icon ui-icon-zoomin"></span>Zoom In</div>
+                    </li>
+                    <li>
+                        <div><span class="ui-icon ui-icon-zoomout"></span>Zoom Out</div>
+                    </li>
+                    <li class="ui-state-disabled">
+                        <div><span class="ui-icon ui-icon-print"></span>Print...</div>
+                    </li>
+                    <ul>
+                        <div>Playback</div>
+                        
+                            <li>
+                                <div><span class="ui-icon ui-icon-seek-start"></span>Prev</div>
+                            </li>
+                            <li>
+                                <div><span class="ui-icon ui-icon-stop"></span>Stop</div>
+                            </li>
+                            <li>
+                                <div><span class="ui-icon ui-icon-play"></span>Play</div>
+                            </li>
+                            <li>
+                                <div><span class="ui-icon ui-icon-seek-end"></span>Next</div>
+                            </li>
+                        
+                    </ul>
+                    <li>
+                        <div>Learn more about this menu</div>
+                    </li>
+                
+            </div>*@
+            
+            @if (Session["Id"] != null && Session["IsValid2FA"] != null && Convert.ToBoolean(Session["IsValid2FA"]))
+            {
+                <div class="collapse navbar-collapse " id="myNavbar">
+                    <ul class="nav navbar-nav">
+                        @Html.ActionLink("Events", "GetAllEvents", "Main", new { area = "" }, new { @class = "navbar-brand" })
+                        @Html.ActionLink("TestSuite", "GetAllTestSuites", "TestSuite", new { area = "" }, new { @class = "navbar-brand" })
+                        @Html.ActionLink("TestcaseLog", "GetAllTestcaseLogs", "Main", new { area = "" }, new { @class = "navbar-brand" })
+                        @*<span style="padding-left:800px; color: grey" class="navbar-brand">
+                                @Html.ActionLink("Logout", "LogOut", "Home", new { style="color:grey;" })
+                            </span>*@
+                        <li class="w3-dropdown-hover w3-hide-small">
+                            <button class="w3-padding-large w3-button" title="More" style="padding-left:300px; color: green; text-align:right"><b>@Session["Id"]</b> <i class="fa fa-caret-down" style="color: grey;align-content:flex-end"></i></button>
+                            <div class="w3-dropdown-content w3-bar-block w3-card-4">
+                                @Html.ActionLink("Logout", "LogOut", "Home", new { @class = "w3-bar-item w3-button", style = "color:green;" })
+
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+            }
+
+
+
+        </div>
+    </div>
+
+    <div class="body-content" id="main">
+        <hr />
+        <br />
+        @RenderBody()
+        <hr />
+        <footer>
+            <p>&copy; @DateTime.Now.Year - Validation</p>
+        </footer>
+    </div>
+
+
+    <script src="~/Scripts/jquery-3.1.1.min.js"></script>
+    <script type="text/javascript" src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    @*<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/4.0.2/bootstrap3-typeahead.js"></script>*@
+    <script src="~/Scripts/jquery.signalR-2.2.2.min.js"></script>
+    <script src="/signalr/hubs"></script>
+    @*<script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>*@
+    <style type="text/css">
+        .ui-menu { width: 150px; }
+        .noti-content {
+            position: fixed;
+            right: 100px;
+            background: #e5e5e5;
+            border-radius: 4px;
+            top: 47px;
+            width: 250px;
+            display: none;
+            border: 1px solid #9E988B;
+        }
+
+        ul#notiContent {
+            max-height: 200px;
+            overflow: auto;
+            padding: 0px;
+            margin: 0px;
+            padding-left: 20px;
+        }
+
+            ul#notiContent li {
+                margin: 3px;
+                padding: 6px;
+                background: #fff;
+            }
+
+        .noti-top-arrow {
+            border-color: transparent;
+            border-bottom-color: #F5DEB3;
+            border-style: dashed dashed solid;
+            border-width: 0 8.5px 8.5px;
+            position: absolute;
+            right: 32px;
+            top: -8px;
+        }
+
+        span.noti {
+            color: #FF2323;
+            margin: 15px;
+            position: fixed;
+            right: 100px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        span.count {
+            position: relative;
+            top: -3px;
+        }
+
+        .sidenav {
+            height: 100%; /* 100% Full-height */
+            width: 0; /* 0 width - change this with JavaScript */
+            position: fixed; /* Stay in place */
+            z-index: 1; /* Stay on top */
+            top: 0;
+            left: 0;
+            background-color: white; /* Black*/
+            overflow-x: hidden; /* Disable horizontal scroll */
+            padding-top: 60px; /* Place content 60px from the top */
+            transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */
+        }
+
+            .sidenav a {
+                padding: 8px 8px 8px 32px;
+                text-decoration: none;
+                font-size: 25px;
+                color: #818181;
+                display: block;
+                transition: 0.3s;
+            }
+
+                .sidenav a:hover, .offcanvas a:focus {
+                    color: #f1f1f1;
+                }
+
+            /* Position and style the close button (top right corner) */
+            .sidenav .closebtn {
+                position: absolute;
+                top: 0;
+                right: 25px;
+                font-size: 36px;
+                margin-left: 50px;
+            }
+
+        #main {
+            transition: margin-left .5s;
+            padding: 20px;
+        }
+    </style>
+    
+    <script type="text/javascript">
+        function openNav() {
+            
+            document.getElementById("mySidenav").style.width = "250px";
+        }
+
+        function closeNav() {
+            document.getElementById("mySidenav").style.width = "0";
+        }
+        $(function () {
+            
+            //$("#mySidenav").menu();
+            $('span.noti').click(function (e) {
+                e.stopPropagation();
+                $('.noti-content').show();
+                var count = 0;
+                count = parseInt($('span.count').html()) || 0;
+                
+                if (count > 0) {
+                    updateNotification();
+                }
+                $('span.count', this).html('&nbsp;');
+            })
+            // hide notifications
+            $('html').click(function () {
+                $('.noti-content').hide();
+            })
+            // update notification
+            function updateNotification() {
+                $('#notiContent').empty();
+                $('#notiContent').append($('<li>Loading...</li>'));
+                $.ajax({
+                    type: 'GET',
+                    url: '/main/GetNotificationEvents',
+                    success: function (response) {
+                        $('#notiContent').empty();
+                        if (response.length == 0) {
+                            $('#notiContent').append($('<li>No data available</li>'));
+                        }
+
+
+                        $.each(response, function (index, value) {
+                            function dtConvFromJSON(value) {
+                                data = value.StartTime;
+                                if (data == null) return '1/1/1950';
+                                var r = /\/Date\(([0-9]+)\)\//gi
+                                var matches = data.match(r);
+                                if (matches == null) return '1/1/1950';
+                                var result = matches.toString().substring(6, 19);
+                                var epochMilliseconds = result.replace(
+                                /^\/Date\(([0-9]+)([+-][0-9]{4})?\)\/$/,
+                                '$1');
+                                var b = new Date(parseInt(epochMilliseconds));
+                                var c = new Date(b.toString());
+                                var curr_date = c.getDate();
+                                var curr_month = c.getMonth() + 1;
+                                var curr_year = c.getFullYear();
+                                var curr_h = c.getHours();
+                                var curr_m = c.getMinutes();
+                                var curr_s = c.getSeconds();
+                                var curr_offset = c.getTimezoneOffset() / 60
+                                var d = curr_month.toString() + '/' + curr_date + '/' + curr_year + " " + curr_h + ':' + curr_m + ':' + curr_s;
+                                return d;
+                            }
+                            var date = dtConvFromJSON(value);
+                            $('#notiContent').append($('<li>New event : ' + value.Subject + ' on' + date + ' added</li>'));
+                            //console.log(value);
+                        });
+
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    }
+                })
+            }
+            // update notification count
+            function updateNotificationCount() {
+                var count = 0;
+                count = parseInt($('span.count').html()) || 0;
+                count++;
+                $('span.count').html(count);
+            }
+            // signalr js code for start hub and send receive notification
+            var notificationHub = $.connection.notificationHub;
+            $.connection.hub.start().done(function () {
+                console.log('Notification hub started');
+            });
+            $.connection.hub.error(function (err) {
+                console.log("HUB ERROR : " + err);
+            });
+            //signalr method for push server message to client
+            notificationHub.client.notify = function (message) {
+                if (message && message.toLowerCase() == "added") {
+                    updateNotificationCount();
+                }
+            }
+        })
+    </script>
+    @RenderSection("Scripts", false)
+</body>
+
+</html>
+

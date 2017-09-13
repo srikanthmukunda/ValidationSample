@@ -1,0 +1,62 @@
+﻿<html>
+@model ValidationSample.Models.Admin
+<head>
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/Scripts/Demo.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js "></script>
+
+    @{
+        ViewBag.Title = "AddUser";
+    }
+</head>
+<body>
+    <h2>Add User</h2>
+
+    <div ng-controller="HomeController">
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="form-horizontal">
+
+                <hr />
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                <div class="form-group">
+                    <label class="control-label col-md-2">User Name<span>:</span> </label>
+                    <div class="col-md-10">
+                        <input type="text" maxlength="50" id="name" name="name" />
+                        @Html.ValidationMessageFor(model => model.UserName, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label col-md-2">Password<span>:</span> </label>
+                    <div class="col-md-10">
+                        <input type="password" maxlength="20" id="pwd" name="pwd" />
+                        @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-2">Confirm Password<span>:</span> </label>
+                    <div class="col-md-10">
+                        <input type="password" maxlength="20" id="confirmPwd" name="confirmPwd" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <input type="submit" value="Create" class="btn btn-default" />
+                    </div>
+                </div>
+            </div>
+        }
+
+        <div>
+            @Html.ActionLink("Back to Login", "Login")
+        </div>
+        
+        </div>
+</body>
+</html>

@@ -1,0 +1,70 @@
+﻿
+@{
+    ViewBag.Title = "GetAllTestcaseLogsAngularInfinite";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+    <h3>Angular table with Infinite scroll</h3>
+    <div ng-app="myApp" ng-controller="InfinityScrollController">
+        <div style="position:relative">
+            <span ng-show="IsLoading" class="loading">Loading...</span>
+            <div infinityscroll="NextPage()" style="height:400px; overflow:auto;">
+                <table class="table table-responsive table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Test Case LogId</th>
+                            <th>Test Instance Id</th>
+                            <th>Testcase Id</th>
+                            <th>Result Type</th>
+                            <th>Event Start Time</th>
+                            <th>Event End Time</th>
+                            <th>Exception</th>
+                            <th>Created Date</th>
+                            <th>Created By</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="log in TestcaseLogList">
+                           
+                            <td>{{log.TestCaseLogId}}</td>
+                            <td>{{log.TestInstanceId}}</td>
+                            <td>{{log.TestCaseId}}</td>
+                            <td>{{log.ResultType}}</td>
+                            <td>{{log.EventStartTime}}</td>
+                            <td>{{log.EventEndTime}}</td>
+                            <td>{{log.Exception}}</td>
+                            <td>{{log.CreatedDate}}</td>
+                            <td>{{log.CreatedBy}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@* JS *@
+@section Scripts{
+<script src="~/Scripts/angular.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ngInfiniteScroll/1.3.0/ng-infinite-scroll.min.js"></script>
+<script src="~/Scripts/MyInfinite.js"></script>
+    }
+@* CSS *@
+<link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" />
+
+<style type="text/css">
+    /*Loading panel css*/
+    .loading {
+        position: absolute;
+        left: 48%;
+        top: 48%;
+        display: block;
+        padding: 5px;
+        background-color: yellow;
+        color: red;
+        border: 1px solid;
+        margin: 0 auto;
+    }
+</style>
+

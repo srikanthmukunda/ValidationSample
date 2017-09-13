@@ -1,0 +1,126 @@
+﻿<html>
+<head>
+    @model IEnumerable<ValidationSample.Models.TestCase>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js "></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-route.js"></script>
+    <script src="~/Scripts/jquery-3.1.1.min.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css">
+    <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+    <script>
+        $(document).ready(function () {
+       alert('0')
+
+
+
+        $("#tstCs").DataTable(({
+            "bSort": true,
+            "bPaginate": true,
+            "bJQueryUI": true,
+            "sPaginationType": "full_numbers",
+            "oLanguage": {
+                "sInfo": "Showing _START_ to _END_ of _TOTAL_ items",
+                "sInfoEmpty": "Showing 0 to 0 of 0 items",
+                "sInfoFiltered": " - filtering from _MAX_ items",
+                "sEmptyTable": "No Records to display",
+            },
+            "bFilter": false,
+            "bInfo": false,
+        }));
+        //$("#tstCs").DataTable().fnDestroy();
+        $("#tstCs").DataTable({ "iDisplayLength": 10 });
+    
+        var arrTableText = [];
+        var oTable = $('cls').DataTable();
+        $.getJSON("GetAllTestCases",
+   function (json) {
+       
+       var tr;
+       //Append each row to html table
+       for (var i = 0; i < json.length; i++) {
+           var arrResultText = [];
+           arrResultText.push(json[i].TestCaseId);
+           arrResultText.push(json[i].TestSuiteId);
+           arrResultText.push(json[i].PipelineStageId);
+           arrResultText.push(json[i].TestCaseTypeId);
+           arrResultText.push(json[i].TestCaseName);
+           arrResultText.push(json[i].Description);
+           arrResultText.push(json[i].IsActive);
+           arrResultText.push(json[i].IsObsolete);
+           arrResultText.push(json[i].ObsoleteReason);
+           arrResultText.push(json[i].CreatedDate);
+           arrResultText.push(json[i].CreatedBy);
+
+           arrTableText.push(arrResultText);
+           //tr = $('<tr/>');
+           //tr.append("<td>" + json[i].TestCaseId + "</td>");
+           //tr.append("<td>" + json[i].TestSuiteId + "</td>");
+           //tr.append("<td>" + json[i].PipelineStageId + "</td>");
+           //tr.append("<td>" + json[i].TestCaseTypeId + "</td>");
+           //tr.append("<td>" + json[i].TestCaseName + "</td>");
+           //tr.append("<td>" + json[i].Description + "</td>");
+           //tr.append("<td>" + json[i].IsActive + "</td>");
+           //tr.append("<td>" + json[i].IsObsolete + "</td>");
+           //tr.append("<td>" + json[i].ObsoleteReason + "</td>");
+           //tr.append("<td>" + json[i].CreatedDate + "</td>");
+           //tr.append("<td>" + json[i].CreatedBy + "</td>");
+       //    $('table').append(tr);
+       }
+       oTable.fnAddData(arrTableText);
+
+   });
+
+
+        });
+
+    </script>
+</head>
+<body>
+
+    <div id="tstCase">
+
+        <table style="width: 99%" align="left"
+               cellspacing="1" cellpadding="1" id="tstCs" class="cls">
+            <thead>
+                <tr>
+                    <th>TestCase Id</th>
+                    <th>TestSuite Id</th>
+                    <th>PipelineStage Id</th>
+                    <th>TestCaseType Id</th>
+                    <th>TestCase Name</th>
+                    <th>Description</th>
+                    <th>IsActive</th>
+                    <th>IsObsolete</th>
+                    <th>ObsoleteReason</th>
+                    <th>Created Date</th>
+                    <th>Created By</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+    </div>
+    @*<div class="form-horizontal">
+            <table id="tstCs" class="table table-bordered  table-hover">
+                <thead>
+                    <tr>
+                        <th>TestCase Id</th>
+                        <th>TestSuite Id</th>
+                        <th>PipelineStage Id</th>
+                        <th>TestCaseType Id</th>
+                        <th>TestCase Name</th>
+                        <th>Description</th>
+                        <th>IsActive</th>
+                        <th>IsObsolete</th>
+                        <th>ObsoleteReason</th>
+                        <th>Created Date</th>
+                        <th>Created By</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>*@
+</body>
+</html>
+

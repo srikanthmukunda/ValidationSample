@@ -1,0 +1,95 @@
+﻿
+@{
+    ViewBag.Title = "TestcaseLogs";
+    Layout = "~/Views/Shared/_Layout2.cshtml";
+}
+<script src="~/Scripts/jquery-3.1.1.min.js"></script>
+<link href="~/Content/themes/base/jquery-ui.min.css" rel="stylesheet" />
+<script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+<link href="~/Content/PQGrid/pqgrid.min.css" rel="stylesheet" />
+<script src="~/Scripts/PQGrid/pqgrid.min.js"></script>
+<script type="text/javascript">
+    $(function () {
+        var pq = {
+            totalRecords: 0,
+            requestPage: 1,
+            pending: true,
+            rpp: 100, //records per request.
+            data: []
+        };
+        var obj = {
+            width: 800,
+            numberCell: { width: 60 },
+            scrollModel: { autoFit: true },
+            virtualX: true, virtualY: true,
+            title: "Infinite Scrolling",
+            resizable: true,
+            beforeSort: function () {
+                pq.data = [];
+                pq.requestPage = 1;
+            },
+            beforeTableView: function (evt, ui) {
+                //debugger;
+                var finalV = ui.finalV,
+                    data = pq.data;
+                if (ui.initV == null) {
+                    return;
+                }
+                if (!pq.pending && finalV >= data.length - 1 && data.length < pq.totalRecords) {
+                    pq.requestPage++;
+                    pq.pending = true;
+                    //request more rows.
+                    $(this).pqGrid('refreshDataAndView');
+                }
+            }
+        };
+        obj.colModel = [
+            { title: "Test Case LogId", dataIndx: 'TestCaseLogId', dataType: "integer", width: 150 },
+            { title: "Test Instance Id", dataIndx: 'TestInstanceId', dataType: "integer", width: 150 },
+            { title: "Testcase Id", dataType: "integer", dataIndx: 'TestCaseId', width: 150 },
+            { title: "Result Type", dataType: "integer", dataIndx: 'ResultType', width: 150 },
+            { title: "Event Start Time", dataType: "date", dataIndx: 'EventStartTime', width: 250 },
+            { title: "Event End Time", dataType: "date", dataIndx: 'EventEndTime', width: 250 },
+            { title: "Exception", dataIndx: 'Exception', width: 200 },
+            { title: "Created Date", dataType: "date", dataIndx: 'CreatedDate', width: 250 },
+            { title: "Created By", dataIndx: 'CreatedBy', width: 250 },
+            
+        ];
+        obj.dataModel = {
+            data: pq.dataCache,
+            dataType: "JSON",
+            location: "remote",
+            sorting: 'remote',
+            sortIndx: 'TestCaseLogId',
+            sortDir: 'up',
+            getUrl: function () {
+             
+
+                return {
+                    url: "/main/GetTestcaseLogs",
+                   
+                };
+            },            
+            getData: function (response) {
+                var data = response.data,                   
+                        len = 46114,
+                        curPage = response.curPage,
+                        pq_data = pq.data,
+                        init = (curPage - 1) * pq.rpp;
+                pq.pending = false;
+                pq.totalRecords = response.totalRecords;
+                for (var i = 0; i < len; i++) {
+                    pq_data[i + init] = data[i];
+                }
+                return { data: pq_data }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert(errorThrown);
+            }
+        };
+
+        $("#grid_infinite_scroll").pqGrid(obj);
+    });
+
+</script>
+<div id="grid_infinite_scroll" style="margin:0 auto;"></div>

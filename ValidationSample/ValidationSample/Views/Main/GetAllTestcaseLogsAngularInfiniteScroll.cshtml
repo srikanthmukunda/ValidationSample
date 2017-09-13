@@ -1,0 +1,112 @@
+﻿
+@{
+    ViewBag.Title = "GetAllTestcaseLogsAngularInfiniteScroll";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+
+@section Scripts{
+<script src="~/Scripts/angular.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ngInfiniteScroll/1.3.0/ng-infinite-scroll.min.js"></script>
+    <script type="text/javascript">
+        var app = angular.module('app', ['infinite-scroll'])
+       .controller('appController', appController);
+
+        appController.$inject = ['$scope', '$window', '$http'];
+
+        function appController($scope, $window, $http) {
+
+            $scope.title = "with Infinite scroll";
+            $scope.searchTerm = "";
+            $scope.numberToDisplay = 50;
+
+            $scope.logEvents = [];
+            //for (var i = 0; i < 1000; i++) {
+            //    $scope.logEvents.push({
+            //        name: "Hello, my name is " + i
+            //    });
+            //}
+            $http({
+                method: 'GET',
+                url: '/main/GetTestcaseLogs'
+            }).then(function (response) {
+                
+                //console.log(value)
+                angular.forEach(response.data, function (value) {
+                    
+                    $scope.logEvents.push({
+                        TestCaseLogId: value.TestCaseLogId,
+                        TestInstanceId: value.TestInstanceId,
+                        TestCaseId: value.TestCaseId,
+                        ResultType: value.ResultType,
+                        EventStartTime: value.EventStartTime,
+                        EventEndTime: value.EventEndTime,
+                        Exception: value.Exception,
+                        CreatedDate: value.CreatedDate,
+                        CreatedBy: value.CreatedBy,
+                    });
+                });                
+            })
+
+            console.log($scope.logEvents)
+            $scope.loadMore = function () {
+                if ($scope.numberToDisplay + 5 < $scope.logEvents.length) {
+                    $scope.numberToDisplay += 5;
+                } else {
+                    $scope.numberToDisplay = $scope.logEvents.length;
+                }
+            };
+        };
+
+    </script>
+}
+
+<div ng-app="app" ng-controller="appController">
+
+    <h1>Testcase Logs {{title}} Items: {{numberToDisplay}}/1000</h1>
+
+    <div class="col-sm-4 min-padding">
+        <div class="input-group">
+            <input type="text" class="form-control" placeholder="Search term" data-ng-model="searchTerm">
+        </div>
+    </div>
+
+    <div class="constrained">
+        
+        <table class="table table-striped" id="loggingTable" infinite-scroll="loadMore()" infinite-scroll-distance="1">
+            <thead>
+                <tr>
+                    <th>Test Case LogId</th>
+                    <th>Test Instance Id</th>
+                    <th>Testcase Id</th>
+                    <th>Result Type</th>
+                    <th>Event Start Time</th>
+                    <th>Event End Time</th>
+                    <th>Exception</th>
+                    <th>Created Date</th>
+                    <th>Created By</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @*<tr data-ng-show="logEventFilter.length === 0">
+                    <td class="center" colspan="3">No records found</td>
+                </tr>*@
+
+                <tr data-ng-repeat="log in logEventFilter = (logEvents | filter:searchTerm | limitTo:numberToDisplay) track by $index">
+                    
+                    <td>{{log.TestCaseLogId}}</td>
+                    <td>{{log.TestInstanceId}}</td>
+                    <td>{{log.TestCaseId}}</td>
+                    <td>{{log.ResultType}}</td>
+                    <td>{{log.EventStartTime}}</td>
+                    <td>{{log.EventEndTime}}</td>
+                    <td>{{log.Exception}}</td>
+                    <td>{{log.CreatedDate}}</td>
+                    <td>{{log.CreatedBy}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>

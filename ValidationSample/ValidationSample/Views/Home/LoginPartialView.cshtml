@@ -1,0 +1,97 @@
+﻿<html>
+<head>
+    <script src="~/Scripts/jquery-3.1.1.min.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js "></script>
+    <link rel="stylesheet" media="screen" href="~/Content/Login.css" />
+    <link rel="stylesheet" media="screen" href="~/Content/bootstrap.min.css" />
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    @model ValidationSample.Models.Admin
+
+    @{
+        ViewBag.Title = "Login";
+        Layout = null;
+    }
+    <script type="text/javascript">
+    $(document).ready(function () {
+        $("#chkElgibility").click(function () {
+
+            //debugger;
+            var click = true;
+            if (($("#userId").val().trim() == '')) {
+               $('label.errUId').show().text('Enter User Id');
+               $("#userId").focus();
+               click = false;
+            }
+            else if (($("#password").val().trim() == '')) {
+                $('label.errUName').hide();
+                $('label.errPwd1').show().text('please enter Password');
+                $("#password").focus();
+                click = false;
+            }
+
+            else
+            {
+                $('label.errUName').hide();
+                $('label.errPwd1').hide();;
+            }
+            return click;
+        });
+    });
+    </script>
+</head>
+<body>
+    @*<h2 style="padding-left:520px;">Login</h2>*@
+    @if (TempData["Id"] != null)
+    {
+        <h3>Your User ID is @TempData["Id"]. Please Login to Continue</h3>
+    }
+
+    @using (Html.BeginForm("Login", "Home"))
+    {
+        <br />
+        <div class="loginmodal-container">
+
+            @Html.AntiForgeryToken()
+            @*<div class="form-horizontal">*@
+            <h2 style="position:center;padding-left:160px;">Login</h2>
+            <hr />
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <div class="form-group">
+                <label class="control-label col-md-2">UserID<span>:</span><span style="color:red">*</span> </label>
+                <div class="col-md-10">
+                    <input type="text" maxlength="20" class="pull-right" id="userId" name="userId" value="@TempData["Id"]" />
+                    <span class="clearfix">
+                        <label class="errUId" style="display: none; color:red" for="userId"></label>
+                    </span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-2">Password<span>:</span><span style="color:red">*</span> </label>
+                <div class="col-md-10">
+                    <input type="password" maxlength="20" class="pull-right" id="password" name="password" />
+                    <span class="clearfix">
+                        <label class="errPwd1" style="display: none; color:red" for="password"></label>
+                    </span>
+                </div>
+            </div>
+            <div class="form-group ">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Login" id="chkElgibility" style="background-color:darkolivegreen;color:blanchedalmond" class="btn btn-default" />
+                    <span style="color:deeppink;padding-right:50px;">New User?</span><input type="button" class="btn btn-default" style="background-color:darkolivegreen;color:blanchedalmond" value="Register" onclick="window.location.href='@Url.Action("AddUser","Home")';" />
+                </div>
+            </div>
+
+
+
+            @if (ViewBag.message != "")
+                {
+
+                <h4>@ViewBag.message</h4>
+            }
+            @*</div>*@
+        </div>
+    }
+</body>
+</html>

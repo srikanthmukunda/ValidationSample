@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="83231707f391431dbfcd8c2905bed6e0" Name="Diagram1">
+        <EntityTypeShape EntityType="ValidationModel.Admin" Width="1.5" PointX="5.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="ValidationModel.Event" Width="1.5" PointX="2.75" PointY="5.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="ValidationModel.PipelineStage" Width="1.5" PointX="0.75" PointY="1.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="ValidationModel.TestCase" Width="1.5" PointX="3" PointY="1" IsExpanded="true" />
+        <EntityTypeShape EntityType="ValidationModel.TestCaseType" Width="1.5" PointX="0.75" PointY="5.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="ValidationModel.TestSuite" Width="1.5" PointX="0.75" PointY="8.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="ValidationModel.TestCaseLog" Width="1.5" PointX="5.75" PointY="3.75" IsExpanded="true" />
+        <AssociationConnector Association="ValidationModel.FK_PplId" ManuallyRouted="false" />
+        <AssociationConnector Association="ValidationModel.FK_TctId" ManuallyRouted="false" />
+        <AssociationConnector Association="ValidationModel.FK_TestSuiteId" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="ValidationModel.TestInstance" Width="1.5" PointX="5.375" PointY="8" />
+        <AssociationConnector Association="ValidationModel.FK__TestCaseL__TestC__064DE20A" />
+        <AssociationConnector Association="ValidationModel.FK__TestCaseL__TestI__0371755F" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

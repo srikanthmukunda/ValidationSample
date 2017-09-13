@@ -1,0 +1,197 @@
+﻿@using ValidationDAL;
+@{
+    ViewBag.Title = "GetAllTestcaseLogsDataTable";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var dal = new ValidationRepository();
+    List<SelectListItem> TestcaseList = new List<SelectListItem>();
+
+    var tstCaseList = dal.GetAllTestCases();
+
+    foreach (var refobj in tstCaseList)
+    {
+        TestcaseList.Add(new SelectListItem
+        {
+            Text = refobj.TestCaseName.ToString(),
+            Value = refobj.TestCaseId.ToString()
+        });
+    }
+
+    List<SelectListItem> TestInstanceList = new List<SelectListItem>();
+
+    var tstInstanceList = dal.GetAllTestInstances();
+
+    foreach (var refobj in tstInstanceList)
+    {
+        TestInstanceList.Add(new SelectListItem
+        {
+            Text = refobj.TestInstanceName.ToString(),
+            Value = refobj.TestInstanceId.ToString()
+        });
+    }
+}
+
+<div style="width:90%; margin:0 auto;">
+    <div style="background-color:#f5f5f5; padding:20px">
+        <h2>Search Panel</h2>
+        <table>
+            <tbody>
+                <tr>
+                    <td>TestInstance</td>
+                    <td>
+                        @Html.DropDownList("ddlTstInstance", TestInstanceList, "--Select--", new { id = "ddlTstInstance", name = "ddlTstInstance", style = "width:200px;" })
+                    </td>
+                    <td>Testcase</td>
+                    <td>
+                        @Html.DropDownList("ddlTstcase", TestcaseList, "--Select--", new { id = "ddlTstcase", name = "ddlTstcase", style="width:200px;" })                       
+                    </td>
+                    <td>
+                        <input type="button" value="Search" id="btnSearch" class="form-control" />
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        </div>
+        <table id="tstCsLog" class="table table-bordered  table-hover display table-responsive table-striped">
+            <thead>
+                <tr>
+                    <th>Test Case LogId</th>
+                    <th>Test Instance Id</th>
+                    <th>Testcase Id</th>
+                    <th>Result Type</th>
+                    <th>Event Start Time</th>
+                    <th>Event End Time</th>
+                    <th>Exception</th>
+                    <th>Created Date</th>
+                    <th>Created By</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+<style>
+    tr.even {
+        background-color: #F5F5F5 !important;
+    }
+</style>
+
+<link rel="stylesheet" type="text/css" href="~/Content/DataTables/css/jquery.dataTables.min.css">
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.15/css/jquery.dataTables_themeroller.css">
+<link href="~/Content/themes/base/jquery-ui.min.css" rel="stylesheet" />
+@* Load datatable js *@
+@section Scripts{
+   <script type="text/javascript" language="javascript" src="~/Scripts/DataTables/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/4.0.2/bootstrap3-typeahead.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#tstCsLog').DataTable({
+                "processing": true, 
+                "serverSide": true,                 
+                "orderMulti": false,
+                "dom": '<"top"i>rt<"bottom"lp><"clear">',
+                "ajax": {
+                    "url": "/home/GetAllTestCaseLogs2",
+                    "type": "POST",
+                    "datatype": "json"
+                },
+                "columns": [
+
+                    { "data": "TestCaseLogId", "name": "TestCaseLogId", "autoWidth": true },
+                    
+                    { "data": "TestInstanceId", "name": "TestInstanceId", "autoWidth": true },
+                    { "data": "TestCaseId", "name": "TestCaseId", "autoWidth": true },
+                    {
+                        "data": "ResultType", "name": "ResultType", "render": function nullData(data) {
+                            if (data == null) return 'null';
+                            return data
+                        }, "autoWidth": true
+                    },
+                    {
+                        "data": "EventStartTime", "name": "EventStartTime", "render": function dtConvFromJSON(data) {
+
+                            if (data == null) return '1/1/1950';
+                            var r = /\/Date\(([0-9]+)\)\//gi
+                            var matches = data.match(r);
+                            if (matches == null) return '1/1/1950';
+                            var result = matches.toString().substring(6, 19);
+                            var epochMilliseconds = result.replace(
+                            /^\/Date\(([0-9]+)([+-][0-9]{4})?\)\/$/,
+                            '$1');
+                            var b = new Date(parseInt(epochMilliseconds));
+                            var c = new Date(b.toString());
+                            var curr_date = c.getDate();
+                            var curr_month = c.getMonth() + 1;
+                            var curr_year = c.getFullYear();
+                            var curr_h = c.getHours();
+                            var curr_m = c.getMinutes();
+                            var curr_s = c.getSeconds();
+                            var curr_offset = c.getTimezoneOffset() / 60
+                            var d = curr_month.toString() + '/' + curr_date + '/' + curr_year + " " + curr_h + ':' + curr_m + ':' + curr_s;
+                            return d;
+                        }, "autoWidth": true
+                    },
+                    {
+                        "data": "EventEndTime", "name": "EventEndTime", "render": function dtConvFromJSON(data) {
+
+                            if (data == null) return '1/1/1950';
+                            var r = /\/Date\(([0-9]+)\)\//gi
+                            var matches = data.match(r);
+                            if (matches == null) return '1/1/1950';
+                            var result = matches.toString().substring(6, 19);
+                            var epochMilliseconds = result.replace(
+                            /^\/Date\(([0-9]+)([+-][0-9]{4})?\)\/$/,
+                            '$1');
+                            var b = new Date(parseInt(epochMilliseconds));
+                            var c = new Date(b.toString());
+                            var curr_date = c.getDate();
+                            var curr_month = c.getMonth() + 1;
+                            var curr_year = c.getFullYear();
+                            var curr_h = c.getHours();
+                            var curr_m = c.getMinutes();
+                            var curr_s = c.getSeconds();
+                            var curr_offset = c.getTimezoneOffset() / 60
+                            var d = curr_month.toString() + '/' + curr_date + '/' + curr_year + " " + curr_h + ':' + curr_m + ':' + curr_s;
+                            return d;
+                        }, "autoWidth": true
+                    },
+                    { "data": "Exception", "name": "Exception", "autoWidth": true },
+
+                    {
+                        "data": "CreatedDate", "name": "CreatedDate", "render": function dtConvFromJSON(data) {
+
+                            if (data == null) return '1/1/1950';
+                            var r = /\/Date\(([0-9]+)\)\//gi
+                            var matches = data.match(r);
+                            if (matches == null) return '1/1/1950';
+                            var result = matches.toString().substring(6, 19);
+                            var epochMilliseconds = result.replace(
+                            /^\/Date\(([0-9]+)([+-][0-9]{4})?\)\/$/,
+                            '$1');
+                            var b = new Date(parseInt(epochMilliseconds));
+                            var c = new Date(b.toString());
+                            var curr_date = c.getDate();
+                            var curr_month = c.getMonth() + 1;
+                            var curr_year = c.getFullYear();
+                            var curr_h = c.getHours();
+                            var curr_m = c.getMinutes();
+                            var curr_s = c.getSeconds();
+                            var curr_offset = c.getTimezoneOffset() / 60
+                            var d = curr_month.toString() + '/' + curr_date + '/' + curr_year + " " + curr_h + ':' + curr_m + ':' + curr_s;
+                            return d;
+                        }, "autoWidth": true
+                    },
+                    { "data": "CreatedBy", "name": "CreatedBy", "autoWidth": true }
+
+                ],
+            });
+            oTable = $('#tstCsLog').DataTable();
+            $('#btnSearch').click(function () {
+                
+                oTable.columns(1).search($('#ddlTstInstance').val().trim());
+                //Apply search for Country // DataTable column index 3
+                oTable.columns(2).search($('#ddlTstcase').val().trim());
+                //hit search on server
+                oTable.draw();
+            });
+        });
+    </script>
+}
